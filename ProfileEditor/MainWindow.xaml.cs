@@ -24,7 +24,7 @@ using System.Windows.Shapes;
     -----
     - Check la version pour Update
     - Check version de NMS pour Update
-    - Raccourcis à envoyer pour menu items
+    - Touches à envoyer pour menu items
 
 
     X Son pour menu items
