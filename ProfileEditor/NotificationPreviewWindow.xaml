@@ -1,0 +1,47 @@
+﻿<Window x:Class="ProfileEditor.NotificationPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProfileEditor"
+        mc:Ignorable="d"
+        Title="Notification preview" Width="218.5" Height="Auto"
+        AllowsTransparency="True" WindowStyle="None" MaxHeight="180" SizeToContent="WidthAndHeight">
+    <Window.Background>
+        <ImageBrush />
+    </Window.Background>
+    <Grid VerticalAlignment="Top" >
+        <Grid.Background>
+            <ImageBrush ImageSource="Resources/store_background_g0.png"/>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!-- Title + Subtitle-->
+            <RowDefinition Height="Auto"/>
+            <!-- Body -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Image Name="ImageIcon" Source="Resources/char_mp_gerald.png" Grid.Column="0" Grid.Row="0" Width="48" Height="48"/>
+
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <!-- Title -->
+                <RowDefinition Height="Auto" />
+                <!-- Subtitle -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Name="LabelTitle" Content="Gerald" Grid.Row="0" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="20" Padding="5,0" />
+            <Label Name="LabelSubtitle" Content="Mission - NEW" Grid.Row="1" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="16" VerticalAlignment="Top" Padding="5,0" />
+        </Grid>
+
+        <Label Name="LabelBody" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="14">
+            <Label.Content>
+                <TextBlock Text="1 to 4 Players&#xD;&#xA;Meth'd Up, 4602m&#xD;&#xA;Alright, fool. I got word on a hustle, it's outside a town at this serious dealer's spot, but you don't gotta deal with him. He's b..." TextWrapping="Wrap"/>
+            </Label.Content>
+        </Label>
+    </Grid>
+</Window>

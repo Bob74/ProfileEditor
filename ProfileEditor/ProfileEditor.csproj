@@ -1,0 +1,1409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5D2C6CC0-6DD9-48F4-9B58-5416D9D7BA2E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ProfileEditor</RootNamespace>
+    <AssemblyName>ProfileEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.3.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="MenuSound.cs" />
+    <Compile Include="MenuSoundConfiguration.xaml.cs">
+      <DependentUpon>MenuSoundConfiguration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notification.cs" />
+    <Compile Include="NotificationConfiguration.xaml.cs">
+      <DependentUpon>NotificationConfiguration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NotificationPreviewWindow.xaml.cs">
+      <DependentUpon>NotificationPreviewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tools.cs" />
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="MenuSoundConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NotificationConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NotificationPreviewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Resource Include="Fonts\ChaletLondonNineteenSixty.ttf" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\banner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\help32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_abigail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_all_players_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_amanda.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ammunation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_andreas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_antonia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ashley.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_bank_bol.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_bank_fleeca.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_bank_maze.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_barry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_beverly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_bikesite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_blimp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_blocked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_boatsite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_broken_down_girl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_bugstars.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_call911.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_carsite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_carsite2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_castro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_chat_call.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_chef.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_cheng.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_chengsr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_chop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_cris.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_dave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_denise.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_detonatebomb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_detonatephone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_devin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_dial_a_sub.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_dom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_domestic_girl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_dr_friedlander.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_dreyfuss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_epsilon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_estate_agent.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_facebook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_filmnoir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_floyd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_frank_trev_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_franklin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_gaymilitary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_hao.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_hitcher_girl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_jimmy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_jimmy_boston.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_joe.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_josef.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_josh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lamar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lazlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lest_frank_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lest_mike_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lester.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lester_deathwish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_lifeinvader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ls_customs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ls_tourist_board.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_manuel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_marnie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_martin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mary_ann.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_maude.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mechanic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_michael.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mike_frank_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mike_trev_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_milsite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_minotaur.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_molly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_army_contact.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_biker_boss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_brucie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_detonatephone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_fam_boss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_fib_contact.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_fm_contact.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_gerald.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_julio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_mechanic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_merryweather.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_mex_boss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_mex_docks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_mex_lt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_mors_mutual.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_prof_boss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_ray_lavoy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_roberto.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_snitch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_stretch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mp_stripclub_pr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_mrs_thornhill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_nigel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_omega.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_oneil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ortega.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_oscar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_patricia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_pegasus_delivery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_planesite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_arms_trafficking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_airport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_bayview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_cafe_rojo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_cockotoos.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_eclipse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_fes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_hen_house.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_hi_men.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_hookies.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_irish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_les_bianco.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_mirror_park.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_pitchers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_singletons.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_tequilala.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_bar_unbranded.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_car_mod_shop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_car_scrap_yard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_cinema_downtown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_cinema_morningwood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_cinema_vinewood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_golf_club.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_plane_scrap_yard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_sonar_collections.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_taxi_lot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_towing_impound.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_property_weed_shop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_rickie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_ron.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_saeeda.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_sasquatch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_simeon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_social_club.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_solomon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_steve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_steve_mike_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_steve_trev_conf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stretch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_chastity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_cheetah.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_fufu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_infernus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_juliet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_nikki.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_peach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_stripper_sapphire.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_tanisha.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_taxi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_taxi_liz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_tennis_coach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_tow_tonya.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_tracey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_trevor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_wade.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\char_youtube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Generate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\build.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PhoneFrame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_acult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_agent14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ah1_janitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ah2_architect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_anton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_army.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_bankman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_bankmanager.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_baygor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_bestmen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_bikerental.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_brad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_camcrew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_car3_actress.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_car3_director.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_car3_samuel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_casey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_comjane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_construction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_customer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_dealer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_driver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ext1_retriever.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_fib2_mrk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_finguru.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_gardener.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_gardening.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_goon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_griff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_groom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_guido.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_hillbilly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_hooker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_hostage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_imporage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_janet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_jerome.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_jesus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_karen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_kenneth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_lamar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_lenny.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_lost.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_lovefist.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_madison.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_maid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_mani.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_markfost.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_maxim.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_melvin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_met1_stalker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_mic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_migrant.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_militarybum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_milton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_mime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_moviestar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_natalia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ojbb1_trucker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ojbb2_biker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ojbb3_xmech.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ojbb4_acult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_patricia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_pilot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_police.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_poppymich.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_princess.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_pro1_clergy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_pro1_hostf1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_pro1_michaelmask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_pro1_trevormask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_racer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_re25_lacey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_re31a_airport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_re31c_hipster.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_re31e_bride.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_re44b_prisoner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_roccopelosi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_sas1_hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_scientist.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_security.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_shop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_sp1_andy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_taotranslator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_target.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_tennis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_terry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_tomepsilon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_ton3_owner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_tour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_tourist.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_tylerdix.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_victim.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_willy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dia_zombie1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_arr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_che.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_chr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_dar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_edd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_get.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_gus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_hug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_kar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_krm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_lester.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_michael.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_nor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_pac.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_pai.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_tal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hc_n_trevor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hush_alterego.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hush_foxymama21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hush_michael.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\hush_trevor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_accountanttvshow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_alamoseatouristboard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_aldinapoli.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_alphadev_87.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_appass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_bahamamamaswest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_barbequespaceflight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_benefactor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_billanthony.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_billyblue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_bittersweetcellphone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_brianleatherdd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_brotheradrian.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_brucespade.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_brucie_k.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_bunueloaddict5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_cashfordeaddreams.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_chadmulligan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_cherenkovvodka.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_chumash_kiki.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_claypgjackson.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_cluckinbell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_cowboy_becky.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_creditcardconsolidationkings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_crevisoutdoorapparel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_crisformage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_cunningstuntacademy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_debbiebabes85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_debra_puertodelsol.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_delanceymedua.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_digifarm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_doa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_dontelford.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_drdalejenkins.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_drugobservationagency.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_dudeeatdog.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_ecolasoftdrink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_electrotoke.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_eris.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_fabienlarouche.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_facadecomputers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_fameorshame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_fearfirst.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_footlong_freddie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_fruit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_fukudad3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_geraldinok6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_grapeseedcharlie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_honkers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_hushsmush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_impotentrage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jackhowitzer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jacksonbbj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jennratt73.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jillsthenewblack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jillvoncrastenburg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_jockcranley.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_joshbernsteinrealtor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_junkenergydrink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_justiceforleonora.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_kankanjill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_kerrymcintosh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_kevmeister_yo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_kevtrimbalt22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_kungfurainbow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lazlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_loggerlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lombank.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lonnie_fig3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lossantospolicedept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_louisaxox91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lsmorticianpete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_lspapacarlos.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_mackinit2009.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_magenta.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_mandybrocoli.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_manolodeoro2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_mcclip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_metv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_misfiregames.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_mitchdexter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_morganchester.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_mouskatear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_nationalofficeofsecurityenforcement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_nobbly_head.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_pameladrake.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_pato_grande26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_pfisterdesign.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_pillpharm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_porcupinepete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_poundersfootball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_powcleanse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_premiumdeluxemotorsport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_prop116.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_railroad_pete47.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_recyclehugo17.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_redwoodcigarettes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_republicanspacerangers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_right4eva.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_rockford_captain67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_rockford_privatetennis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_rustybrownsdonuts.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sandysuresteve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sebastiandixfashion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_seriouscougarshow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sextondaniels.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sexxisandra_ruggirl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sillyjilly28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sixfiguretemps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sorrycommodeband.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_sprunk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_stabfino.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_suemurry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_swallowclothing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_swingersbaseball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_tacobrendan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_thecraze.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_thomasstight_yeah.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_titotittyfan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_toeshoes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_tonymctony.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_tummytodd_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_usafrankieg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_vinewoodlionel67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_whizwireless.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_yourdeadfamily.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_yournewbabysname.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\web_yungmarlon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\store_background_g0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\checked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trash.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
