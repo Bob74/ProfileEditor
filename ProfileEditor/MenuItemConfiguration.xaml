@@ -1,0 +1,103 @@
+﻿<Window x:Class="ProfileEditor.MenuItemConfiguration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProfileEditor"
+        mc:Ignorable="d"
+        Title="Item properties" Height="260" Width="360" WindowStyle="None" SizeToContent="Height" MinWidth="360" MinHeight="260" WindowStartupLocation="CenterOwner">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Item text-->
+        <Label Content="*" Grid.Column="0" Grid.Row="0" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold"/>
+        <TextBlock Text="Item text:" Margin="5" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+        <TextBox Name="TextBoxItemText" Margin="0,5,5,5" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center"/>
+
+        <!-- Sound file -->
+        <TextBlock Text="Sound file:" Margin="5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+        <Grid Grid.Column="2" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Name="TextBoxSound" Grid.Column="0" VerticalAlignment="Center"/>
+            <Button Name="ButtonSoundBrowse" Content="..." Margin="5,0,5,0" Grid.Column="1" Width="25" Height="18" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0,-0.3,0,0" Click="ButtonSoundBrowse_Click"/>
+        </Grid>
+
+        <!-- Sound volume -->
+        <TextBlock Text="Sound volume:" Margin="5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+        <Grid Grid.Column="2" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Slider Name="SliderSoundVolume" Grid.Column="0" VerticalAlignment="Center" LargeChange="25" Maximum="100" SmallChange="1" Value="25" ValueChanged="SliderSoundVolume_ValueChanged"/>
+            <TextBlock Name="TextBlockSoundVolume" Text="25%" Margin="5,0,5,0" Grid.Column="1" VerticalAlignment="Center" Width="30" TextAlignment="Right"/>
+        </Grid>
+
+        <!-- Notification -->
+        <TextBlock Margin="5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="Notification:"/>
+        <Grid Margin="0,5,0,5" Grid.Column="2" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Name="NotificationPreview" Margin="0,0,5,0" Content="Preview" Grid.Column="0" HorizontalAlignment="Center" Foreground="WhiteSmoke" MouseEnter="NotificationPreview_MouseEnter" MouseLeave="NotificationPreview_MouseLeave" MouseMove="NotificationPreview_MouseMove">
+                <Label.Background>
+                    <SolidColorBrush Color="Black" Opacity="0.7"/>
+                </Label.Background>
+            </Label>
+            <Button Name="ButtonNotificationSet" Content="Set a notification..." Margin="0,0,5,0" Grid.Column="1" MinHeight="30" Click="ButtonNotificationSet_Click"/>
+        </Grid>
+
+
+        <!-- Shortcut key(s) -->
+        <Label Content="*" Grid.Column="0" Grid.Row="4" Foreground="Red" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock Margin="5" Grid.Column="1" Grid.Row="4" VerticalAlignment="Top"><Run Text="Shortcut key(s):"/><LineBreak/><Run Text="(1 key/line)"/></TextBlock>
+        <Grid Grid.Column="2" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Name="TextBoxShortcut" Margin="0,5,0,5" Grid.Column="0" IsManipulationEnabled="True" TextWrapping="Wrap" AcceptsReturn="True"/>
+            <Button Margin="5" Grid.Column="1" IsEnabled="False" VerticalAlignment="Top" Height="60">
+                <TextBlock Text="Browse mods config files..." TextWrapping="Wrap" TextAlignment="Center"/>
+            </Button>
+        </Grid>
+
+        <!-- Ok / Cancel -->
+        <Grid Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Name="ButtonOk" Margin="5,5,0,5" Grid.Column="0" Click="ButtonOk_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
+                    <TextBlock Text="Ok" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button Name="ButtonCancel" Margin="5" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/cancel.png" Margin="5,0,5,0" Stretch="Fill" Height="24" Width="24"/>
+                    <TextBlock Text="Cancel" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </Grid>
+        
+    </Grid>
+</Window>

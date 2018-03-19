@@ -36,99 +36,6 @@ using System.Windows.Shapes;
 
 namespace ProfileEditor
 {
-    public class PhoneContact
-    {
-        public string Icon { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class NativeUIItem
-    {
-        public virtual string Text { get; set; }
-        public virtual string DisplayName { get => Text; }
-        public virtual NativeUIMenuSubmenu ParentMenu { get; set; } = null;
-    }
-    public class NativeUIBanner : NativeUIItem
-    {
-        public override string DisplayName { get => "[" + Text + "]"; }
-
-        public string FilePath { get; set; }
-        public string FileName { get => GetFileName(); }
-        private string GetFileName()
-        {
-            return new FileInfo(FilePath).Name;
-        }
-    }
-    public class NativeUIMenuSubmenu : NativeUIItem
-    {
-        public override string DisplayName { get => Text + " [" + Items.Count + "]"; }
-        public List<NativeUIItem> Items { get; set; }
-
-        public NativeUIMenuSubmenu(NativeUIMenuSubmenu parent = null)
-        {
-            ParentMenu = parent;
-        }
-    }
-    public class NativeUIMenuSubtitle : NativeUIItem { }
-    public class NativeUIMenuItem : NativeUIItem
-    {
-        public override string DisplayName { get => GetDisplayName(); }
-        public List<string> Keys { get; set; }
-        public Notification Notification { get; set; }
-        public MenuSound Sound { get; set; }
-
-        public NativeUIMenuItem(NativeUIMenuSubmenu parent = null)
-        {
-            ParentMenu = parent;
-        }
-
-        private string GetKeySequence()
-        {
-            string sequence = "";
-            foreach (string key in Keys)
-                sequence += "+" + key;
-
-            return sequence.Remove(0, 1);
-        }
-
-        private string GetDisplayName()
-        {
-            string name = Text;
-
-            if (Keys != null)
-            {
-                if (Keys.Count > 0)
-                    name += " (" + GetKeySequence() + ")";
-            }
-            if (Notification != null)
-            {
-                name += " (Notification)";
-            }
-            if (Sound != null)
-            {
-                name += " (Sound)";
-            }
-
-            return name;
-        }
-    }
-    public class NativeUIBack : NativeUIItem
-    {
-        public NativeUIBack(NativeUIMenuSubmenu parent = null)
-        {
-            Text = "Back";
-            ParentMenu = parent;
-        }
-    }
-    public class NativeUIReturnMenu : NativeUIItem
-    {
-        public NativeUIReturnMenu()
-        {
-            Text = "Return to main menu";
-            ParentMenu = null;
-        }
-    }
-
     public static class TreeViewCommands
     {
         public static readonly RoutedUICommand AddItem = new RoutedUICommand
@@ -161,28 +68,6 @@ namespace ProfileEditor
                 new KeyGesture(Key.Delete)
             }
         );
-
-        public static readonly RoutedUICommand ItemAddItem = new RoutedUICommand
-        (
-            "Add a new item",
-            "ItemAddItem",
-            typeof(TreeViewCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.A, ModifierKeys.Control)
-            }
-        );
-        public static readonly RoutedUICommand ItemAddSubmenu = new RoutedUICommand
-        (
-            "Add a submenu",
-            "ItemAddSubmenu",
-            typeof(TreeViewCommands),
-            new InputGestureCollection()
-            {
-                new KeyGesture(Key.S, ModifierKeys.Control)
-            }
-        );
-
     }
 
     /// <summary>
@@ -190,12 +75,12 @@ namespace ProfileEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string BaseDir = Tools.GetGamePath()?.ToString() ?? AppDomain.CurrentDomain.BaseDirectory;
-        public readonly List<string> BannerFileExtensions = new List<string> { ".png", ".jpeg", ".jpg", ".bmp" };
-        public readonly List<string> SoundFileExtensions = new List<string> { ".wav" };
+        public static string BaseDir = Tools.GetGamePath()?.ToString() ?? AppDomain.CurrentDomain.BaseDirectory;
+        public static readonly List<string> BannerFileExtensions = new List<string> { ".png", ".jpeg", ".jpg", ".bmp" };
+        public static readonly List<string> SoundFileExtensions = new List<string> { ".wav" };
 
-        public List<PhoneContact> GetPhoneContactCollection { get => PhoneContactCollection; }
-        List<PhoneContact> PhoneContactCollection = new List<PhoneContact>();
+        public static List<PhoneContact> GetPhoneContactCollection { get => PhoneContactCollection; }
+        static List<PhoneContact> PhoneContactCollection = new List<PhoneContact>();
 
         List<NativeUIItem> Menu = new List<NativeUIItem>();
         List<NativeUIItem> PreviewCurrentSubmenu = new List<NativeUIItem>();
@@ -204,7 +89,11 @@ namespace ProfileEditor
         Notification PhoneNotification;
         NotificationConfiguration NotificationConfiguration;
         NotificationPreviewWindow NotificationPreviewWindow;
+        MenuItemConfiguration MenuItemConfiguration;
+
         MenuSoundConfiguration MenuSoundConfiguration;
+
+
 
 
         public MainWindow()
@@ -429,7 +318,7 @@ namespace ProfileEditor
                 NotificationPreviewWindow = new NotificationPreviewWindow(PhoneNotification);
                 NotificationPreviewWindow.Show();
                 NotificationPreviewWindow.Left = System.Windows.Forms.Cursor.Position.X + 10;
-                NotificationPreviewWindow.Top = System.Windows.Forms.Cursor.Position.Y + 10;
+                NotificationPreviewWindow.Top = System.Windows.Forms.Cursor.Position.Y - NotificationPreviewWindow.Height - 10;
             }
         }
         private void PhoneNotificationPreview_MouseLeave(object sender, MouseEventArgs e)
@@ -445,7 +334,7 @@ namespace ProfileEditor
             if (NotificationPreviewWindow != null)
             {
                 NotificationPreviewWindow.Left = System.Windows.Forms.Cursor.Position.X + 10;
-                NotificationPreviewWindow.Top = System.Windows.Forms.Cursor.Position.Y + 10;
+                NotificationPreviewWindow.Top = System.Windows.Forms.Cursor.Position.Y - NotificationPreviewWindow.Height - 10;
             }
         }
         private void ButtonPhoneNotificationSet_Click(object sender, RoutedEventArgs e)
@@ -554,6 +443,29 @@ namespace ProfileEditor
         /*
             TreeView Item : Context menu
         */
+        // TreeViewItem selection using Right-click
+        // https://www.telerik.com/forums/selecting-node-on-mouse-right-click
+        private void TreeViewMenu_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TreeViewItem ClickedTreeViewItem = new TreeViewItem();
+
+            //find the original object that raised the event
+            UIElement ClickedItem = VisualTreeHelper.GetParent(e.OriginalSource as UIElement) as UIElement;
+
+            //find the clicked TreeViewItem
+            while ((ClickedItem != null) && !(ClickedItem is TreeViewItem))
+            {
+                ClickedItem = VisualTreeHelper.GetParent(ClickedItem) as UIElement;
+            }
+
+            ClickedTreeViewItem = ClickedItem as TreeViewItem;
+            if (ClickedTreeViewItem != null)
+            {
+                ClickedTreeViewItem.IsSelected = true;
+                ClickedTreeViewItem.Focus();
+            }
+        }
+
         // Set Notification
         private void MenuItemSetItemNotification_Click(object sender, RoutedEventArgs e)
         {
@@ -582,22 +494,26 @@ namespace ProfileEditor
 
         internal void AddItem(NativeUIItem node)
         {
-            string name = "Item";
-            List<string> keys = new List<string> { "SHIFT", "C" };
             NativeUIMenuSubmenu parent = GetSuitableParentFromItem(node);
+            NativeUIMenuItem item = new NativeUIMenuItem(parent);
 
-            NativeUIMenuItem item = new NativeUIMenuItem(parent)
+            MenuItemConfiguration = new MenuItemConfiguration(ref item) { Owner = this };
+            MenuItemConfiguration.ShowDialog();
+
+            if (!MenuItemConfiguration.DialogResult.HasValue || !MenuItemConfiguration.DialogResult.Value)
+                item = null;
+
+            MenuItemConfiguration = null;
+
+            if (item != null)
             {
-                Text = name,
-                Keys = keys
-            };
+                if (parent is NativeUIMenuSubmenu)
+                    parent.Items.Add(item);
+                else
+                    RootMenu.Items.Add(item);
 
-            if (parent is NativeUIMenuSubmenu)
-                parent.Items.Add(item);
-            else
-                RootMenu.Items.Add(item);
-
-            RefreshTreeview();
+                RefreshTreeview();
+            }
         }
 
         internal void AddSubmenu(NativeUIItem node)

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProfileEditor"
         mc:Ignorable="d"
         Title="Notification preview" Width="218.5" Height="Auto"
-        AllowsTransparency="True" WindowStyle="None" MaxHeight="180" SizeToContent="WidthAndHeight">
+        AllowsTransparency="True" WindowStyle="None" MaxHeight="180" SizeToContent="Height">
     <Window.Background>
         <ImageBrush />
     </Window.Background>

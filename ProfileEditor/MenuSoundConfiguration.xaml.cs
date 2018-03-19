@@ -32,12 +32,12 @@ namespace ProfileEditor
         private void ButtonSoundBrowse_Click(object sender, RoutedEventArgs e)
         {
             string filter = "Wave files|";
-            foreach (string ext in ((MainWindow)Owner).SoundFileExtensions)
+            foreach (string ext in MainWindow.SoundFileExtensions)
             {
                 filter += "*" + ext + ";";
             }
 
-            Microsoft.Win32.OpenFileDialog dial = new Microsoft.Win32.OpenFileDialog() { InitialDirectory = ((MainWindow)Owner).BaseDir, Filter = filter };
+            Microsoft.Win32.OpenFileDialog dial = new Microsoft.Win32.OpenFileDialog() { InitialDirectory = MainWindow.BaseDir, Filter = filter };
             if (dial.ShowDialog() == true)
                 TextBoxSound.Text = dial.FileName;
         }

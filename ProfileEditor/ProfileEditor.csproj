@@ -81,10 +81,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MenuItemConfiguration.xaml.cs">
+      <DependentUpon>MenuItemConfiguration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MenuShortcutConfiguration.xaml.cs">
+      <DependentUpon>MenuShortcutConfiguration.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MenuSound.cs" />
     <Compile Include="MenuSoundConfiguration.xaml.cs">
       <DependentUpon>MenuSoundConfiguration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NativeUIItems.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="NotificationConfiguration.xaml.cs">
       <DependentUpon>NotificationConfiguration.xaml</DependentUpon>
@@ -92,6 +99,7 @@
     <Compile Include="NotificationPreviewWindow.xaml.cs">
       <DependentUpon>NotificationPreviewWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PhoneContact.cs" />
     <Compile Include="Tools.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +113,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MenuItemConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MenuShortcutConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MenuSoundConfiguration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ProfileEditor
 {
@@ -50,7 +41,7 @@ namespace ProfileEditor
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            PhoneContactCollection.AddRange(((MainWindow)Owner).GetPhoneContactCollection);
+            PhoneContactCollection.AddRange(MainWindow.GetPhoneContactCollection);
             ComboBoxIcons.ItemsSource = PhoneContactCollection;
             ComboBoxIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == Notification.Icon);
 
