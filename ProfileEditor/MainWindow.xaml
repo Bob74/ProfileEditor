@@ -196,7 +196,7 @@
                                         <ContextMenu>
                                             <MenuItem Header="Remove banner" InputGestureText="Del" Command="local:TreeViewCommands.RemoveItem">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/cancel.png" />
+                                                    <Image Source="Resources/cancel.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -211,18 +211,18 @@
                                         <ContextMenu>
                                             <MenuItem Header="Add an item" InputGestureText="Ctrl+A" Command="local:TreeViewCommands.AddItem">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/add.png" />
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <MenuItem Header="Add a submenu" InputGestureText="Ctrl+S" Command="local:TreeViewCommands.AddSubmenu">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/add.png" />
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
                                             <MenuItem Header="Remove selection" InputGestureText="Del" Command="local:TreeViewCommands.RemoveItem">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/cancel.png" />
+                                                    <Image Source="Resources/cancel.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -237,12 +237,12 @@
                                         <ContextMenu>
                                             <MenuItem Header="Add an item" InputGestureText="Ctrl+A" Command="local:TreeViewCommands.AddItem">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/add.png" />
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <MenuItem Header="Add a submenu" InputGestureText="Ctrl+S" Command="local:TreeViewCommands.AddSubmenu">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/add.png" />
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
@@ -251,7 +251,7 @@
                                             <Separator />
                                             <MenuItem Header="Remove selection" InputGestureText="Del" Command="local:TreeViewCommands.RemoveItem">
                                                 <MenuItem.Icon>
-                                                    <Image Source="Resources/cancel.png" />
+                                                    <Image Source="Resources/cancel.png" Stretch="Fill" Width="16" Height="16"/>
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
