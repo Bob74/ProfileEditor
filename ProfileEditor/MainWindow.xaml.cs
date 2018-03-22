@@ -724,12 +724,8 @@ namespace ProfileEditor
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\Test.xml";
 
             // Phone
-            XmlPhone phone;
-            if (!CheckBoxPhone.IsChecked ?? false)
-            {
-                phone = null;
-            }
-            else
+            XmlPhone phone = null;
+            if (CheckBoxPhone.IsChecked ?? false)
             {
                 phone = new XmlPhone()
                 {
@@ -739,12 +735,8 @@ namespace ProfileEditor
             }
 
             // Menu
-            XmlMenu menu;
-            if (!CheckBoxMenu.IsChecked ?? false)
-            {
-                menu = null;
-            }
-            else
+            XmlMenu menu = null;
+            if (CheckBoxMenu.IsChecked ?? false)
             {
                 List<string> keys = new List<string>();
                 foreach (string key in TextBoxMenuShortcut.Text.Replace("\r", "").Split('\n'))
@@ -753,7 +745,8 @@ namespace ProfileEditor
                 menu = new XmlMenu()
                 {
                     Banner = TextBoxMenuBanner.Text,
-                    Hotkey = keys
+                    Hotkey = keys,
+                    Items = RootMenu.Items
                 };
             }
 

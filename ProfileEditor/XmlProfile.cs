@@ -46,8 +46,8 @@ namespace ProfileEditor
     {
         private string _profilePath;
         private XElement _profileFile;
-        private XmlPhone _phone;
-        private XmlMenu _menu;
+        private XmlPhone _phone = null;
+        private XmlMenu _menu = null;
         private XElement phoneSection;
         private XElement menuSection;
 
@@ -67,7 +67,15 @@ namespace ProfileEditor
             try
             {
                 _profileFile = XElement.Load(_profilePath);
-                FillXmlProfile();
+
+                try
+                {
+                    FillXmlProfile();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Cannot write to the profile file: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception e)
             {
@@ -95,9 +103,26 @@ namespace ProfileEditor
         private void FillXmlProfile()
         {
             // Phone part
-            if (_phone != null) _profileFile.Add(GetPhoneSection());
+            try
+            {
+                if (_phone != null)
+                    _profileFile.Add(GetPhoneSection());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error while writing Phone informations: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             // Menu part
-            if (_menu != null) _profileFile.Add(GetMenuSection());
+            try
+            {
+                if (_menu != null)
+                    _profileFile.Add(GetMenuSection());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error while writing Menu informations: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             _profileFile.Save(_profilePath);
         }
@@ -118,18 +143,11 @@ namespace ProfileEditor
         private XElement GetMenuSection()
         {
             menuSection = new XElement("Menu");
-
-            AnalyzeTree(_menu.Items);
+            GetItems(_menu.Items);
             return menuSection;
         }
 
-
         private void GetItems(List<NativeUIItem> menuItems)
-        {
-
-        }
-
-        private void AnalyzeTree(List<NativeUIItem> menuItems)
         {
             foreach (var menuItem in menuItems)
             {
@@ -141,8 +159,8 @@ namespace ProfileEditor
                         //AnalyzeTree(submenu.Items);
                         break;
                     case NativeUIMenuItem item:
-                        XElement subItem = new XElement("SubItem");
-                        subItem.Attribute("Text").SetValue(item.Text);
+                        XElement subItem = new XElement("SubItem", new XAttribute("text", item.Text));
+                        FillItem(item, subItem);
                         menuSection.Add(subItem);
                         break;
                 }
@@ -150,6 +168,12 @@ namespace ProfileEditor
                 // go back to root section
 
             }
+        }
+        
+        private void FillItem(NativeUIMenuItem item, XElement subItem)
+        {
+            foreach (string key in item.Keys)
+                subItem.Add(new XElement("Key", key));
         }
 
     }
