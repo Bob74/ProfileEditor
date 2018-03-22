@@ -120,7 +120,7 @@
                         <TextBlock Text="Cancel" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Name="ButtonRemove" Margin="0,5,5,5" Grid.Column="2" Click="ButtonRemove_Click">
+                <Button Name="ButtonRemove" Margin="0,5,5,5" Grid.Column="2" Click="ButtonRemove_Click" ToolTip="Remove the notification">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/trash.png" Stretch="Fill" Height="24" Width="24"/>
                     </StackPanel>

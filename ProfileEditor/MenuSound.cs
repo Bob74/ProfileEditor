@@ -16,5 +16,10 @@ namespace ProfileEditor
             File = "";
             Volume = 25;
         }
+        public MenuSound(MenuSound sound)
+        {
+            File = sound.File;
+            Volume = sound.Volume;
+        }
     }
 }

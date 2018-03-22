@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProfileEditor"
         mc:Ignorable="d"
-        Title="Item properties" Height="260" Width="360" WindowStyle="None" SizeToContent="Height" MinWidth="360" MinHeight="260" WindowStartupLocation="CenterOwner">
+        Title="Item properties" Height="260" Width="360" WindowStyle="None" SizeToContent="Height" MinWidth="360" MinHeight="260" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
     
     <Grid>
         <Grid.ColumnDefinitions>

@@ -34,8 +34,14 @@
                 <!-- Subtitle -->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Label Name="LabelTitle" Content="Gerald" Grid.Row="0" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="20" Padding="5,0" />
-            <Label Name="LabelSubtitle" Content="Mission - NEW" Grid.Row="1" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="16" VerticalAlignment="Top" Padding="5,0" />
+
+            <!-- Using Viewbox to resize the Label when the text is too long -->
+            <Viewbox Grid.Row="0" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Label Name="LabelTitle" Content="Gerald" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="20" Padding="5,0,50,0"/>
+            </Viewbox>
+            <Viewbox Grid.Row="1" Height="19" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Label Name="LabelSubtitle" Content="Mission - NEW" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="16" Padding="5,0,50,0"/>
+            </Viewbox>
         </Grid>
 
         <Label Name="LabelBody" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="14">

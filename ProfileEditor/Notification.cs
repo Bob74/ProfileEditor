@@ -25,5 +25,15 @@ namespace ProfileEditor
             Delay = 0;
             Sound = true;
         }
+
+        public Notification(Notification notif)
+        {
+            Icon = notif.Icon;
+            Title = notif.Title;
+            Subtitle = notif.Subtitle;
+            Message = notif.Message;
+            Delay = notif.Delay;
+            Sound = notif.Sound;
+        }
     }
 }

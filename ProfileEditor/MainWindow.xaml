@@ -21,9 +21,12 @@
         <CommandBinding Command="local:TreeViewCommands.AddItem" CanExecute="AddItemCommand_CanExecute" Executed="AddItemCommand_Executed"/>
         <CommandBinding Command="local:TreeViewCommands.AddSubmenu" CanExecute="AddSubmenuCommand_CanExecute" Executed="AddSubmenuCommand_Executed"/>
         <CommandBinding Command="local:TreeViewCommands.RemoveItem" CanExecute="RemoveItemCommand_CanExecute" Executed="RemoveItemCommand_Executed"/>
+        <CommandBinding Command="local:TreeViewCommands.EditItem" CanExecute="EditItemCommand_CanExecute" Executed="EditItemCommand_Executed"/>
+        <CommandBinding Command="local:TreeViewCommands.CopyItem" CanExecute="CopyItemCommand_CanExecute" Executed="CopyItemCommand_Executed"/>
+        <CommandBinding Command="local:TreeViewCommands.CutItem" CanExecute="CutItemCommand_CanExecute" Executed="CutItemCommand_Executed"/>
+        <CommandBinding Command="local:TreeViewCommands.PasteItem" CanExecute="PasteItemCommand_CanExecute" Executed="PasteItemCommand_Executed"/>
     </Window.CommandBindings>
 
-    
     <Grid Margin="5,0,5,5">
 
         <!-- Disposition générale -->
@@ -42,9 +45,12 @@
         <!-- Groupe "Phone" -->
         <GroupBox Grid.Column="0" Grid.Row="1" BorderThickness="2">
             <GroupBox.Header>
-                <Label Foreground="#FF3E3E3E" FontSize="16" FontFamily="{StaticResource Chalet}" FontWeight="Bold" Padding="0">Phone</Label>
+                <CheckBox Name="CheckBoxPhone" Checked="CheckBoxPhone_Checked" Unchecked="CheckBoxPhone_Unchecked" VerticalContentAlignment="Center" Padding="5,0,0,0">
+                    <Label Content="Phone" FontSize="16" FontFamily="{StaticResource Chalet}" FontWeight="Bold" Foreground="#FF3E3E3E" Padding="0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                </CheckBox>
             </GroupBox.Header>
-            <Grid Margin="2,0,2,2">
+            
+            <Grid Name="GridPhone" Margin="2,0,2,2" IsEnabled="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="100"/>
@@ -64,8 +70,8 @@
                 <!-- Contact name -->
                 <Label Content="*" Grid.Column="0" Grid.Row="0" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold"/>
                 <TextBlock Text="Contact name:" Margin="5" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
-                <TextBox Name="TextBoxContactName" Margin="0,5,0,5" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" TextChanged="TextBoxContactName_TextChanged"/>
-                <CheckBox Name="CheckBoxContactNameBold" Content="Bold (depend of the selected icon)" Margin="0,0,0,5" Grid.Column="2" Grid.Row="1" Checked="CheckBoxContactNameBold_Checked" Unchecked="CheckBoxContactNameBold_Unchecked"/>
+                <TextBox Name="TextBoxPhoneContactName" Margin="0,5,0,5" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" TextChanged="TextBoxContactName_TextChanged"/>
+                <CheckBox Name="CheckBoxPhoneContactNameBold" Content="Bold (depend of the selected icon)" Margin="0,0,0,5" Grid.Column="2" Grid.Row="1" Checked="CheckBoxContactNameBold_Checked" Unchecked="CheckBoxContactNameBold_Unchecked"/>
 
                 <!-- Contact icon -->
                 <TextBlock Text="Contact icon:" Margin="5" Grid.Column="1" Grid.Row="2"/>
@@ -162,23 +168,32 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="5"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
+                <!-- Banner -->
                 <TextBlock Margin="0,5,5,5" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"><Run Text="Banner "/><Run Text="picture"/><Run Text=":"/></TextBlock>
                 <TextBox Name="TextBoxMenuBanner" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" TextChanged="TextBoxMenuBanner_TextChanged"/>
                 <Button Name="ButtonMenuBannerBrowse" Content="..." Margin="5,5,0,5" Grid.Column="2" Grid.Row="0" Width="25" Height="18" VerticalAlignment="Center" Click="ButtonMenuBannerBrowse_Click" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0,-0.3,0,0"/>
 
-                <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFD5DFE5" Height="2" VerticalAlignment="Center"/>
+                <!-- Menu shortcut -->
+                <TextBlock Margin="5" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"><Run Text="Shortcut key(s):"/><LineBreak/><Run Text="(1 key/line)"/></TextBlock>
+                <TextBox Name="TextBoxMenuShortcut" Margin="0,5,0,5" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" IsManipulationEnabled="True" TextWrapping="Wrap" Height="60" AcceptsReturn="True"/>
 
-                <TreeView Name="TreeViewMenu" Margin="0,5,0,0" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Grid.RowSpan="3" MouseRightButtonDown="TreeViewMenu_MouseRightButtonDown">
+                <!-- Separator -->
+                <Label Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Background="#FFD5DFE5" Height="2" VerticalAlignment="Center"/>
+
+                <!-- Menu Treeview -->
+                <TreeView Name="TreeViewMenu" Margin="0,5,0,0" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Grid.RowSpan="3" MouseRightButtonDown="TreeViewMenu_MouseRightButtonDown">
                     <TreeView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Name="TreeViewMainContextClear" Header="Remove everything" Click="TreeViewMainContextClear_Click">
                                 <MenuItem.Icon>
-                                    <Image Source="Resources/cancel.png" />
+                                    <Image Source="Resources/clear.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
                         </ContextMenu>
@@ -220,9 +235,63 @@
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
+                                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="local:TreeViewCommands.CopyItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/copy.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Cut" InputGestureText="Ctrl+X" Command="local:TreeViewCommands.CutItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/cut.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="local:TreeViewCommands.PasteItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/paste.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Edit submenu properties" InputGestureText="F2" Command="local:TreeViewCommands.EditItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/edit.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
                                             <MenuItem Header="Remove selection" InputGestureText="Del" Command="local:TreeViewCommands.RemoveItem">
                                                 <MenuItem.Icon>
                                                     <Image Source="Resources/cancel.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </TextBlock.ContextMenu>
+                                </TextBlock>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:NativeUIMenu}" ItemsSource="{Binding Items}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding DisplayName}" FontFamily="{StaticResource Chalet}" FontSize="16" FontWeight="Bold">
+                                    <TextBlock.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add an item" InputGestureText="Ctrl+A" Command="local:TreeViewCommands.AddItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Add a submenu" InputGestureText="Ctrl+S" Command="local:TreeViewCommands.AddSubmenu">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/add.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="local:TreeViewCommands.PasteItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/paste.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Name="TreeViewMainContextClear" Header="Remove everything" Click="TreeViewMainContextClear_Click">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/clear.png" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                         </ContextMenu>
@@ -246,8 +315,27 @@
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
-                                            <MenuItem Name="MenuItemSetItemSound" Header="View/set sound" Click="MenuItemSetItemSound_Click"/>
-                                            <MenuItem Name="MenuItemSetItemNotification" Header="View/set notification" Click="MenuItemSetItemNotification_Click"/>
+                                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="local:TreeViewCommands.CopyItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/copy.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Cut" InputGestureText="Ctrl+X" Command="local:TreeViewCommands.CutItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/cut.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="local:TreeViewCommands.PasteItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/paste.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Edit item properties" InputGestureText="F2" Command="local:TreeViewCommands.EditItem">
+                                                <MenuItem.Icon>
+                                                    <Image Source="Resources/edit.png" Stretch="Fill" Width="16" Height="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
                                             <Separator />
                                             <MenuItem Header="Remove selection" InputGestureText="Del" Command="local:TreeViewCommands.RemoveItem">
                                                 <MenuItem.Icon>
@@ -419,7 +507,7 @@
                             </TextBlock.Effect><Run Text="Phone"/><Run Text=" preview"/>
                         </TextBlock>
 
-                        <Grid Grid.Row="1" Height="437" VerticalAlignment="Bottom" Margin="0,0,0,-6">
+                        <Grid Name="GridPreviewPhone" Grid.Row="1" Height="437" VerticalAlignment="Bottom" Margin="0,0,0,-6" Visibility="Hidden">
                             <Grid.Background>
                                 <ImageBrush ImageSource="Resources/PhoneFrame.png" Stretch="Uniform"/>
                             </Grid.Background>
@@ -454,7 +542,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Margin="5" Grid.Column="0" Grid.Row="0">
+                <Button Name="ButtonGenerate" Margin="5" Grid.Column="0" Grid.Row="0" Click="ButtonGenerate_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/build.png" Margin="5,0,5,0" Stretch="None"/>
                         <TextBlock Text="Generate the profile!" Margin="5" VerticalAlignment="Center" />

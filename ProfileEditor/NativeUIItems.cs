@@ -3,12 +3,15 @@ using System.IO;
 
 namespace ProfileEditor
 {
-    public class NativeUIItem
+    public enum ItemType { None, Banner, Item, Submenu }
+
+    public abstract class NativeUIItem
     {
         public virtual string Text { get; set; }
         public virtual string DisplayName { get => Text; }
-        public virtual NativeUIMenuSubmenu ParentMenu { get; set; } = null;
+        public virtual NativeUIMenu ParentMenu { get; set; } = null;
     }
+
     public class NativeUIBanner : NativeUIItem
     {
         public override string DisplayName { get => "[" + Text + "]"; }
@@ -20,17 +23,45 @@ namespace ProfileEditor
             return new FileInfo(FilePath).Name;
         }
     }
-    public class NativeUIMenuSubmenu : NativeUIItem
+
+    public class NativeUIMenu : NativeUIItem
     {
         public override string DisplayName { get => Text + " [" + Items.Count + "]"; }
         public List<NativeUIItem> Items { get; set; }
 
-        public NativeUIMenuSubmenu(NativeUIMenuSubmenu parent = null)
+        public NativeUIMenu(NativeUIMenu parent = null)
         {
             ParentMenu = parent;
+            Items = new List<NativeUIItem>();
         }
     }
+    public class NativeUIMenuSubmenu : NativeUIMenu
+    {
+        public NativeUIMenuSubmenu(NativeUIMenu parent = null)
+        {
+            ParentMenu = parent;
+            Items = new List<NativeUIItem>();
+        }
+
+        public NativeUIMenuSubmenu(NativeUIMenuSubmenu submenu, NativeUIMenu parent = null)
+        {
+            ParentMenu = parent;
+            Text = submenu.Text;
+            Items = new List<NativeUIItem>();
+
+            foreach (NativeUIItem item in submenu.Items)
+            {
+                if (item is NativeUIMenuItem)
+                    Items.Add(new NativeUIMenuItem((NativeUIMenuItem)item, this));
+                else if (item is NativeUIMenuSubmenu)
+                    Items.Add(new NativeUIMenuSubmenu((NativeUIMenuSubmenu)item, this));
+            }
+        }
+    }
+
+    // Only used in menu preview
     public class NativeUIMenuSubtitle : NativeUIItem { }
+
     public class NativeUIMenuItem : NativeUIItem
     {
         public override string DisplayName { get => GetDisplayName(); }
@@ -38,12 +69,20 @@ namespace ProfileEditor
         public Notification Notification { get; set; }
         public MenuSound Sound { get; set; }
 
-        public NativeUIMenuItem(NativeUIMenuSubmenu parent = null)
+        public NativeUIMenuItem(NativeUIMenu parent = null)
         {
             ParentMenu = parent;
             Keys = new List<string>();
         }
-
+        public NativeUIMenuItem(NativeUIMenuItem item, NativeUIMenu parent = null)
+        {
+            ParentMenu = parent;
+            Text = item.Text;
+            Keys = new List<string>();
+            Keys.AddRange(item.Keys);
+            if (Notification != null) Notification = new Notification(item.Notification);
+            if (Sound != null) Sound = new MenuSound(item.Sound);
+        }
         private string GetKeySequence()
         {
             string sequence = "";
@@ -76,7 +115,7 @@ namespace ProfileEditor
     }
     public class NativeUIBack : NativeUIItem
     {
-        public NativeUIBack(NativeUIMenuSubmenu parent = null)
+        public NativeUIBack(NativeUIMenu parent = null)
         {
             Text = "Back";
             ParentMenu = parent;

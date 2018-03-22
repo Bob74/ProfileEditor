@@ -39,6 +39,28 @@ namespace ProfileEditor
             Item = item;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBoxItemText.Text = Item.Text;
+
+            if (Item.Sound != null)
+            {
+                TextBoxSound.Text = Item.Sound.File;
+                SliderSoundVolume.Value = Item.Sound.Volume;
+            }
+            if (Item.Notification != null) Notification = Item.Notification;
+
+            if (Item.Keys.Count > 0)
+            {
+                foreach (string key in Item.Keys)
+                    TextBoxShortcut.Text += key + "\r\n";
+                TextBoxShortcut.Text = TextBoxShortcut.Text.Remove(TextBoxShortcut.Text.Length - 2, 2);
+            }
+
+            TextBoxItemText.Focus();
+            TextBoxItemText.SelectAll();
+        }
+
         // Sound
         private void ButtonSoundBrowse_Click(object sender, RoutedEventArgs e)
         {
@@ -111,6 +133,7 @@ namespace ProfileEditor
                     Item.Sound = new MenuSound() { File = TextBoxSound.Text, Volume = (int)SliderSoundVolume.Value };
 
                 // Keys
+                Item.Keys.Clear();
                 foreach (string key in TextBoxShortcut.Text.Replace("\r", "").Split('\n'))
                 {
                     Item.Keys.Add(key);

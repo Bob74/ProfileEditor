@@ -1,0 +1,27 @@
+﻿<Window x:Class="ProfileEditor.CreateLoadProfile"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProfileEditor"
+        mc:Ignorable="d"
+        Title="No More Shortcuts - Profile editor" Height="144.205" Width="230" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Name="ButtonLoadProfile" Margin="5" Grid.Row="0" Height="48" Click="ButtonLoadProfile_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
+                <TextBlock Text="Load an existing profile..." VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+        <Button Name="ButtonCreateProfile" Margin="5,0,5,5" Grid.Row="1" Height="48" Click="ButtonCreateProfile_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
+                <TextBlock Text="Create a new profile" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>
