@@ -142,31 +142,82 @@ namespace ProfileEditor
         }
         private XElement GetMenuSection()
         {
-            menuSection = new XElement("Menu");
-            GetItems(_menu.Items);
-            return menuSection;
+            return GetItems(_menu.Items);
         }
 
-        private void GetItems(List<NativeUIItem> menuItems)
+
+        private XElement GetItems(List<NativeUIItem> menuItems)
         {
+            XElement content = new XElement("Menu");
+
             foreach (var menuItem in menuItems)
             {
                 switch (menuItem)
                 {
                     case NativeUIMenuSubmenu submenu:
-                        // add submenu to section
-                        // set current section to submenu
-                        //AnalyzeTree(submenu.Items);
+                        // Creating a new SubMenu
+                        XElement submenuSection = GetItems(submenu.Items);
+
+                        // Renaming the submenu with its real name
+                        submenuSection.Name = "SubMenu";
+                        submenuSection.Add(new XAttribute("text", submenu.Text));
+                        content.Add(submenuSection);
                         break;
                     case NativeUIMenuItem item:
+                        // Creating a new SubItem
                         XElement subItem = new XElement("SubItem", new XAttribute("text", item.Text));
                         FillItem(item, subItem);
-                        menuSection.Add(subItem);
+                        content.Add(subItem); // Simply closing
+                        break;
+                }
+            }
+
+            return content;
+        }
+
+        private void GetItems2(XElement submenuSection, List<NativeUIItem> menuItems)
+        {
+            bool IsRoot = false;
+            if (submenuSection == null) IsRoot = true;
+
+            foreach (var menuItem in menuItems)
+            {
+                switch (menuItem)
+                {
+                    case NativeUIMenuSubmenu submenu:
+                        // Opening SubMenu
+                        submenuSection = new XElement("SubMenu", new XAttribute("text", submenu.Text));
+                        GetItems2(submenuSection, submenu.Items);
+                        break;
+                    case NativeUIMenuItem item:
+                        // Opening SubItem
+                        XElement subItem = new XElement("SubItem", new XAttribute("text", item.Text));
+                        FillItem(item, subItem);
+
+                        // Closing SubItem
+                        if (submenuSection != null)
+                            submenuSection.Add(subItem); // Adding to current submenu
+                        else
+                            menuSection.Add(subItem); // Simply closing
                         break;
                 }
 
-                // go back to root section
+                // Closing SubMenu if opened
+                if (submenuSection != null)
+                {
+                    submenuSection.Add(submenuSection);
+                    submenuSection = null;
+                }
+                else
+                {
+                    menuSection.Add(submenuSection);
+                }
 
+                if (IsRoot)
+                {
+                    if (menuSection != null) menuSection.Add(submenuSection);
+                    submenuSection = null;
+                }
             }
         }
         
