@@ -74,9 +74,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox Name="TextBoxShortcut" Margin="0,5,0,5" Grid.Column="0" IsManipulationEnabled="True" TextWrapping="Wrap" AcceptsReturn="True"/>
-            <Button Margin="5" Grid.Column="1" IsEnabled="False" VerticalAlignment="Top" Height="60">
+            <!--<Button Margin="5" Grid.Column="1" IsEnabled="False" VerticalAlignment="Top" Height="60">
                 <TextBlock Text="Browse mods config files..." TextWrapping="Wrap" TextAlignment="Center"/>
-            </Button>
+            </Button>-->
         </Grid>
 
         <!-- Ok / Cancel -->

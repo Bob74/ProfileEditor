@@ -25,8 +25,13 @@ using System.Windows.Shapes;
     - Check la version pour Update
     - Check version de NMS pour Update
 
+    - Passer Hotkey et HotkeyModifier en "Key" et "ModifierKeys"
+
     - Ne pas afficher les astérisques quand le group est disabled ?
 
+    - Afficher les touches utilisées par les mods
+
+    X Treeview: Coller doit instancier les objets à l'instant T
     X Touches à envoyer pour menu items
     X Son pour menu items
     X Notifications à ajouter pour le téléphone normal + le menu
@@ -184,11 +189,9 @@ namespace ProfileEditor
                     TextBoxMenuBanner.Text = System.IO.Path.GetDirectoryName(profilePath) + "\\" + xmlmenu.Banner;
 
                 // Hotkey
-                if (xmlmenu.Hotkey.Count > 0)
+                if (xmlmenu.Hotkey != 0)
                 {
-                    foreach (string key in xmlmenu.Hotkey)
-                        TextBoxMenuShortcut.Text += key + "\r\n";
-                    TextBoxMenuShortcut.Text = TextBoxMenuShortcut.Text.Remove(TextBoxMenuShortcut.Text.Length - 2, 2);
+                    TextBoxMenuHotkey.Text = xmlmenu.Hotkey.ToString();
                 }
 
                 // Items
@@ -222,6 +225,14 @@ namespace ProfileEditor
             ComboBoxPhoneContactIcons.ItemsSource = PhoneContactCollection;
             ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == XmlPhone.DefaultIcon);
 
+
+            ComboBoxMenuHotkeyModifiers.ItemsSource = new Dictionary<string, ModifierKeys>
+            {
+                { "None", ModifierKeys.None},
+                { "Ctrl", ModifierKeys.Control},
+                { "Alt", ModifierKeys.Alt},
+                { "Shift", ModifierKeys.Shift}
+            };
 
             RootMenu = new NativeUIMenu()
             {
@@ -577,7 +588,10 @@ namespace ProfileEditor
         }
         private void CopyItemCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            ClipBoardItem = (NativeUIItem)TreeViewMenu.SelectedItem;
+            if (TreeViewMenu.SelectedItem is NativeUIMenuItem)
+                ClipBoardItem = new NativeUIMenuItem((NativeUIMenuItem)TreeViewMenu.SelectedItem);
+            else if (TreeViewMenu.SelectedItem is NativeUIMenuSubmenu)
+                ClipBoardItem = new NativeUIMenuSubmenu((NativeUIMenuSubmenu)TreeViewMenu.SelectedItem);
         }
         private void CutItemCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -824,9 +838,10 @@ namespace ProfileEditor
                 XmlMenu menu = null;
                 if (CheckBoxMenu.IsChecked ?? false)
                 {
-                    List<string> shortcut = new List<string>();
-                    foreach (string key in TextBoxMenuShortcut.Text.Replace("\r", "").Split('\n'))
-                        if (key != "") shortcut.Add(key);
+                    int shortcut = 0;
+
+                    if (TextBoxMenuHotkey.Text != "")
+                        shortcut = int.Parse(TextBoxMenuHotkey.Text);
 
                     menu = new XmlMenu()
                     {
@@ -845,6 +860,35 @@ namespace ProfileEditor
         {
             new CreateLoadProfile().Show();
             Close();
+        }
+
+        private void ComboBoxMenuHotkeyModifiers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ComboBoxMenuHotkeyModifiers.SelectedValue != null)
+            {
+                if ((int)ComboBoxMenuHotkeyModifiers.SelectedValue != 0)
+                {
+                    if (TextBoxMenuHotkey.Text != "")
+                        TextBlockMenuHotkey.Text = ((KeyValuePair<string, ModifierKeys>)e.AddedItems[0]).Key + " + " + TextBoxMenuHotkey.Text;
+                    else
+                        TextBlockMenuHotkey.Text = ((KeyValuePair<string, ModifierKeys>)e.AddedItems[0]).Key;
+                }
+            }
+            else
+                TextBlockMenuHotkey.Text = TextBoxMenuHotkey.Text;
+        }
+
+        private void TextBoxMenuHotkey_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBoxMenuHotkey.Text = ((int)e.Key).ToString();
+
+            if (ComboBoxMenuHotkeyModifiers.SelectedValue != null)
+            {
+                if ((int)ComboBoxMenuHotkeyModifiers.SelectedValue != 0)
+                    TextBlockMenuHotkey.Text = ComboBoxMenuHotkeyModifiers.Text + " + " + e.Key.ToString();
+            }
+            else
+                TextBlockMenuHotkey.Text = e.Key.ToString();
         }
     }
 }

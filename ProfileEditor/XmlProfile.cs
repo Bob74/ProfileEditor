@@ -41,7 +41,7 @@ namespace ProfileEditor
         public string Banner { get; set; }
 
         // Shortcut to open the menu
-        public List<string> Hotkey { get; set; }
+        public int Hotkey { get; set; }
 
         // Menu items
         public List<NativeUIItem> Items { get; set; }
@@ -179,20 +179,16 @@ namespace ProfileEditor
                 XmlMenu xmlmenu = new XmlMenu();
                 xmlmenu.Banner = menu.Element("Banner")?.Value ?? XmlMenu.DefaultBanner;
 
-                xmlmenu.Hotkey = new List<string>();
-
                 try
                 {
-                    List<string> shortcut = new List<string>();
+                    int  shortcut = 0;
 
                     if (menu.Element("Keys") != null)
-                        foreach (XElement key in menu.Element("Keys").Elements("Key"))
-                            shortcut.Add(key.Value);
+                        shortcut = int.Parse(menu.Element("Keys").Element("Key")?.Value ?? "0");
                     else
-                        foreach (XElement key in menu.Elements("Key"))
-                            shortcut.Add(key.Value);
-                    
-                    xmlmenu.Hotkey.AddRange(shortcut);
+                        shortcut = int.Parse(menu.Element("Key")?.Value ?? "0");
+
+                    xmlmenu.Hotkey = shortcut;
                 }
                 catch
                 {
