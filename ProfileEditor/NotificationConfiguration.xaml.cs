@@ -43,7 +43,7 @@ namespace ProfileEditor
         {
             PhoneContactCollection.AddRange(MainWindow.GetPhoneContactCollection);
             ComboBoxIcons.ItemsSource = PhoneContactCollection;
-            ComboBoxIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == Notification.Icon);
+            ComboBoxIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => string.Compare(x.Name, Notification.Icon, true) == 0);
 
             TextBoxTitle.Text = Notification.Title;
             TextBoxSubtitle.Text = Notification.Subtitle;

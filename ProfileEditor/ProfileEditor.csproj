@@ -53,6 +53,9 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -677,9 +680,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\char_youtube.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Generate.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\build.png" />
@@ -1460,6 +1460,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\import.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\new.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

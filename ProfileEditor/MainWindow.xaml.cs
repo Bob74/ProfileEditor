@@ -117,7 +117,7 @@ namespace ProfileEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string BaseDir = Tools.GetGamePath()?.ToString() ?? AppDomain.CurrentDomain.BaseDirectory;
+        public static string BaseDir = Tools.GetGamePath()?.ToString() + "\\scripts\\NoMoreShortcuts" ?? AppDomain.CurrentDomain.BaseDirectory;
         public static readonly List<string> BannerFileExtensions = new List<string> { ".png", ".jpeg", ".jpg", ".bmp" };
         public static readonly List<string> SoundFileExtensions = new List<string> { ".wav" };
 
@@ -126,21 +126,83 @@ namespace ProfileEditor
 
         List<NativeUIItem> Menu = new List<NativeUIItem>();
         List<NativeUIItem> PreviewCurrentSubmenu = new List<NativeUIItem>();
-        NativeUIMenu RootMenu;
+        NativeUIMenu RootMenu = new NativeUIMenu();
 
-        Notification PhoneNotification;
-        NotificationConfiguration NotificationConfiguration;
-        NotificationPreviewWindow NotificationPreviewWindow;
-        MenuItemConfiguration MenuItemConfiguration;
-        MenuSubmenuConfiguration MenuSubmenuConfiguration;
+        Notification PhoneNotification = null;
+        NotificationConfiguration NotificationConfiguration = null;
+        NotificationPreviewWindow NotificationPreviewWindow = null;
+        MenuItemConfiguration MenuItemConfiguration = null;
+        MenuSubmenuConfiguration MenuSubmenuConfiguration = null;
 
         NativeUIItem ClipBoardItem;
         bool IsClipBoardItemCut = false;
 
         public MainWindow()
         {
+            InitializeWindow();
+        }
+        public MainWindow(string profilePath, XmlPhone xmlphone, XmlMenu xmlmenu)
+        {
+            InitializeWindow();
+
+            if (xmlphone != null)
+            {
+                CheckBoxPhone.IsChecked = true;
+
+                // Contact Name
+                TextBoxPhoneContactName.Text = xmlphone.ContactName;
+
+                // Contact Icon
+                TextBoxPhoneContactIcon.Text = xmlphone.ContactIcon;
+                ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => string.Compare(x.Name, xmlphone.ContactIcon, true) == 0);
+                
+                // Dialing timeout
+                IntegerUpDownPhoneDialing.Value = xmlphone.DialTimeout;
+
+                // Sound
+                TextBoxPhoneSound.Text = xmlphone.Sound.File;
+                SliderSoundVolume.Value = xmlphone.Sound.Volume;
+
+                // Notification
+                PhoneNotification = xmlphone.Notification;
+
+                // Shortcut
+                if (xmlphone.Keys.Count > 0)
+                {
+                    foreach (string key in xmlphone.Keys)
+                        TextBoxPhoneShortcut.Text += key + "\r\n";
+                    TextBoxPhoneShortcut.Text = TextBoxPhoneShortcut.Text.Remove(TextBoxPhoneShortcut.Text.Length - 2, 2);
+                }
+            }
+
+            if (xmlmenu != null)
+            {
+                CheckBoxMenu.IsChecked = true;
+
+                // Banner
+                if (xmlmenu.Banner != "")
+                    TextBoxMenuBanner.Text = System.IO.Path.GetDirectoryName(profilePath) + "\\" + xmlmenu.Banner;
+
+                // Hotkey
+                if (xmlmenu.Hotkey.Count > 0)
+                {
+                    foreach (string key in xmlmenu.Hotkey)
+                        TextBoxMenuShortcut.Text += key + "\r\n";
+                    TextBoxMenuShortcut.Text = TextBoxMenuShortcut.Text.Remove(TextBoxMenuShortcut.Text.Length - 2, 2);
+                }
+
+                // Items
+                RootMenu.Items.AddRange(xmlmenu.Items);
+                foreach (NativeUIItem item in RootMenu.Items)
+                    item.ParentMenu = RootMenu;
+            }
+
+        }
+
+        private void InitializeWindow()
+        {
             InitializeComponent();
-            
+
             string[] resources = GetResourceNames();
 
             foreach (string res in resources)
@@ -158,7 +220,7 @@ namespace ProfileEditor
             }
             PhoneContactCollection.Sort((x, y) => string.Compare(x.Name, y.Name));
             ComboBoxPhoneContactIcons.ItemsSource = PhoneContactCollection;
-            ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == "CHAR_DEFAULT");
+            ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == XmlPhone.DefaultIcon);
 
 
             RootMenu = new NativeUIMenu()
@@ -218,8 +280,15 @@ namespace ProfileEditor
         // Contact Icon
         private void ComboBoxPhoneContactIcons_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            PreviewContactIcon.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/ProfileEditor;component/" + ((PhoneContact)e.AddedItems[0]).Icon)));
-            TextBoxPhoneContactIcon.Text = ((PhoneContact)e.AddedItems[0]).Name;
+            try
+            {
+                PreviewContactIcon.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/ProfileEditor;component/" + ((PhoneContact)e.AddedItems[0]).Icon)));
+                TextBoxPhoneContactIcon.Text = ((PhoneContact)e.AddedItems[0]).Name;
+            }
+            catch
+            {
+                // Can happen if we try to select an invalid icon (ie: when loading a bad profile).
+            }
         }
         private void TextBoxPhoneContactIcon_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -299,7 +368,10 @@ namespace ProfileEditor
 
             OpenFileDialog dial = new OpenFileDialog() { InitialDirectory = BaseDir, Filter = filter };
             if (dial.ShowDialog() == true)
+            {
                 TextBoxMenuBanner.Text = dial.FileName;
+                RefreshTreeview();
+            }
         }
         
         private void TextBoxMenuBanner_TextChanged(object sender, TextChangedEventArgs e)
@@ -434,7 +506,7 @@ namespace ProfileEditor
             {
                 if (item is NativeUIBack)
                 {
-                    if (((NativeUIBack)item).ParentMenu != null)
+                    if (((NativeUIBack)item).ParentMenu != RootMenu)
                     {
                         NativeUIMenu parent = ((NativeUIBack)item).ParentMenu;
 
@@ -721,36 +793,58 @@ namespace ProfileEditor
 
         private void ButtonGenerate_Click(object sender, RoutedEventArgs e)
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Test.xml";
+            string filePath = "";
 
-            // Phone
-            XmlPhone phone = null;
-            if (CheckBoxPhone.IsChecked ?? false)
+            SaveFileDialog dial = new SaveFileDialog() { InitialDirectory = BaseDir, Filter = "XML file|*.xml;" };
+            if (dial.ShowDialog() == true)
             {
-                phone = new XmlPhone()
+                filePath = dial.FileName;
+
+                // Phone
+                XmlPhone phone = null;
+                if (CheckBoxPhone.IsChecked ?? false)
                 {
-                    ContactName = TextBoxPhoneContactName.Text,
-                    ContactIcon = TextBoxPhoneContactIcon.Text
-                };
-            }
+                    List<string> shortcut = new List<string>();
+                    foreach (string key in TextBoxPhoneShortcut.Text.Replace("\r", "").Split('\n'))
+                        if (key != "") shortcut.Add(key);
 
-            // Menu
-            XmlMenu menu = null;
-            if (CheckBoxMenu.IsChecked ?? false)
-            {
-                List<string> keys = new List<string>();
-                foreach (string key in TextBoxMenuShortcut.Text.Replace("\r", "").Split('\n'))
-                    keys.Add(key);
+                    phone = new XmlPhone()
+                    {
+                        ContactName = TextBoxPhoneContactName.Text,
+                        ContactIcon = TextBoxPhoneContactIcon.Text,
+                        Keys = shortcut
+                    };
 
-                menu = new XmlMenu()
+                    if (IntegerUpDownPhoneDialing.Value != null) phone.DialTimeout = IntegerUpDownPhoneDialing.Value;
+                    if (TextBoxPhoneSound.Text != "") phone.Sound = new MenuSound() { File = TextBoxPhoneSound.Text, Volume = (int)SliderSoundVolume.Value };
+                    if (PhoneNotification != null) phone.Notification = PhoneNotification;
+                }
+
+                // Menu
+                XmlMenu menu = null;
+                if (CheckBoxMenu.IsChecked ?? false)
                 {
-                    Banner = TextBoxMenuBanner.Text,
-                    Hotkey = keys,
-                    Items = RootMenu.Items
-                };
-            }
+                    List<string> shortcut = new List<string>();
+                    foreach (string key in TextBoxMenuShortcut.Text.Replace("\r", "").Split('\n'))
+                        if (key != "") shortcut.Add(key);
 
-            XmlProfile profile = new XmlProfile(path, phone, menu);
+                    menu = new XmlMenu()
+                    {
+                        Banner = TextBoxMenuBanner.Text,
+                        Hotkey = shortcut,
+                        Items = RootMenu.Items
+                    };
+                }
+
+                XmlProfile profile = new XmlProfile(phone, menu);
+                profile.ExportProfile(filePath);
+            }
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            new CreateLoadProfile().Show();
+            Close();
         }
     }
 }

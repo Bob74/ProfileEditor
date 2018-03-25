@@ -5,23 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProfileEditor"
         mc:Ignorable="d"
-        Title="No More Shortcuts - Profile editor" Height="144.205" Width="230" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+        Title="No More Shortcuts - Profile editor" Height="180" Width="230" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Button Name="ButtonLoadProfile" Margin="5" Grid.Row="0" Height="48" Click="ButtonLoadProfile_Click">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
-                <TextBlock Text="Load an existing profile..." VerticalAlignment="Center" />
-            </StackPanel>
+        <Button Name="ButtonLoadProfile" Margin="5" Grid.Row="0" Height="64" Click="ButtonLoadProfile_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="Resources/import.png" Margin="5,0,5,0" Grid.Column="0" Stretch="Fill" Width="48" Height="48"/>
+                <TextBlock Text="Load an existing profile..." Grid.Column="1" VerticalAlignment="Center" />
+            </Grid>
         </Button>
-        <Button Name="ButtonCreateProfile" Margin="5,0,5,5" Grid.Row="1" Height="48" Click="ButtonCreateProfile_Click">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
-                <TextBlock Text="Create a new profile" VerticalAlignment="Center" />
-            </StackPanel>
+        <Button Name="ButtonCreateProfile" Margin="5,0,5,5" Grid.Row="1" Height="64" Click="ButtonCreateProfile_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="Resources/new.png" Margin="5,0,5,0" Grid.Column="0" Stretch="Fill" Width="48" Height="48"/>
+                <TextBlock Text="Create a new profile" Grid.Column="1" VerticalAlignment="Center" />
+            </Grid>
         </Button>
     </Grid>
 </Window>

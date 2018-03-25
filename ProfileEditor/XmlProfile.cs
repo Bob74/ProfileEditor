@@ -11,26 +11,32 @@ namespace ProfileEditor
 {
     public class XmlPhone
     {
+        public static readonly string DefaultName = "Unknown";
+        public static readonly string DefaultIcon = "CHAR_DEFAULT";
+        public static readonly bool DefaultBold = false;
+        public static readonly int DefaultDialTimeout = 0;
+
         // Contact
         public string ContactName { get; set; }
-        public bool? Bold { get; set; }
+        public bool? Bold { get; set; } = null;
         public string ContactIcon { get; set; }
 
         // Dialing
-        public int? DialTimeout { get; set; }
+        public int? DialTimeout { get; set; } = null;
 
         // Sound
-        public string SoundFile { get; set; }
-        public int? Volume { get; set; }
+        public MenuSound Sound { get; set; } = null;
 
         // Notification
-        public Notification Notification { get; set; }
+        public Notification Notification { get; set; } = null;
 
         // Shortcut keys
         public List<string> Keys { get; set; }
     }
-    class XmlMenu
+    public class XmlMenu
     {
+        public static readonly string DefaultBanner = "";
+
         // Banner
         public string Banner { get; set; }
 
@@ -44,33 +50,42 @@ namespace ProfileEditor
 
     class XmlProfile
     {
-        private string _profilePath;
         private XElement _profileFile;
         private XmlPhone _phone = null;
         private XmlMenu _menu = null;
-        private XElement phoneSection;
-        private XElement menuSection;
 
-        public XmlProfile(string path, XmlPhone xmlPhone, XmlMenu xmlMenu)
+        public XmlProfile(XmlPhone xmlPhone, XmlMenu xmlMenu)
         {
-            _profilePath = path;
             _phone = xmlPhone;
             _menu = xmlMenu;
-
-            ExportProfile();
+        }
+        public XmlProfile(string path)
+        {
+            try
+            {
+                _profileFile = XElement.Load(path);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Cannot open profile file: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        public void ExportProfile()
+        /// <summary>
+        /// Export the data into the xml profile.
+        /// </summary>
+        /// <param name="path">File path</param>
+        public void ExportProfile(string path)
         {
-            CreateFile();
+            CreateFile(path);
             
             try
             {
-                _profileFile = XElement.Load(_profilePath);
+                _profileFile = XElement.Load(path);
 
                 try
                 {
-                    FillXmlProfile();
+                    WriteXmlProfile(path);
                 }
                 catch (Exception e)
                 {
@@ -83,9 +98,23 @@ namespace ProfileEditor
             }
         }
 
-        private void CreateFile()
+        /// <summary>
+        /// Read the xml profile and return its content.
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <returns></returns>
+        public XElement ImportProfile(string path, out XmlPhone xmlPhone, out XmlMenu xmlMenu)
         {
-            FileInfo file = new FileInfo(_profilePath);
+            xmlPhone = ReadPhoneValues(_profileFile);
+            xmlMenu = ReadMenuValues(_profileFile);
+
+            return _profileFile;
+        }
+
+
+        private void CreateFile(string path)
+        {
+            FileInfo file = new FileInfo(path);
 
             if (!file.Directory.Exists)
                 Directory.CreateDirectory(file.Directory.FullName);
@@ -100,7 +129,133 @@ namespace ProfileEditor
             doc.Save(file.FullName);
         }
 
-        private void FillXmlProfile()
+        private XmlPhone ReadPhoneValues(XElement profile)
+        {
+            if (profile?.Element("Phone") != null)
+            {
+                XElement phone = profile.Element("Phone");
+
+                XmlPhone xmlphone = new XmlPhone();
+                xmlphone.ContactName = phone.Element("ContactName")?.Value ?? XmlPhone.DefaultName;
+                xmlphone.ContactIcon = phone.Element("ContactIcon")?.Value ?? XmlPhone.DefaultIcon;
+                xmlphone.DialTimeout = int.Parse(phone.Element("DialTimeout")?.Value ?? XmlPhone.DefaultDialTimeout.ToString());
+                xmlphone.Bold = bool.Parse(phone.Element("Bold")?.Value ?? XmlPhone.DefaultBold.ToString());
+                xmlphone.Sound = ReadXmlSound(phone);
+                xmlphone.Notification = ReadXmlNotification(phone);
+
+                xmlphone.Keys = new List<string>();
+
+                try
+                {
+                    List<string> shortcut = new List<string>();
+
+                    if (phone.Element("Keys") != null)
+                        foreach (XElement key in phone.Element("Keys").Elements("Key"))
+                            shortcut.Add(key.Value);
+                    else
+                        foreach (XElement key in phone.Elements("Key"))
+                            shortcut.Add(key.Value);
+
+                    xmlphone.Keys.AddRange(shortcut);
+                }
+                catch (Exception e)
+                {
+                    // If no menu, then there should be keys
+                    if (profile?.Element("Menu") == null)
+                        MessageBox.Show("Cannot find a <Key> entry in the <Phone> section: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                return xmlphone;
+            }
+            else
+                return null;
+        }
+        private XmlMenu ReadMenuValues(XElement profile)
+        {
+            if (profile?.Element("Menu") != null)
+            {
+                XElement menu = profile.Element("Menu");
+
+                XmlMenu xmlmenu = new XmlMenu();
+                xmlmenu.Banner = menu.Element("Banner")?.Value ?? XmlMenu.DefaultBanner;
+
+                xmlmenu.Hotkey = new List<string>();
+
+                try
+                {
+                    List<string> shortcut = new List<string>();
+
+                    if (menu.Element("Keys") != null)
+                        foreach (XElement key in menu.Element("Keys").Elements("Key"))
+                            shortcut.Add(key.Value);
+                    else
+                        foreach (XElement key in menu.Elements("Key"))
+                            shortcut.Add(key.Value);
+                    
+                    xmlmenu.Hotkey.AddRange(shortcut);
+                }
+                catch
+                {
+                    // Hotkeys to open the menu aren't required.
+                }
+
+                xmlmenu.Items = GetMenuSection(menu)?.Items ?? new List<NativeUIItem>();
+
+                return xmlmenu;
+            }
+            else
+                return null;
+        }
+
+
+        private MenuSound ReadXmlSound(XElement section)
+        {
+            MenuSound sound = new MenuSound();
+            if (section.Element("Sound") != null)
+            {
+                sound.File = section.Element("Sound")?.Element("SoundFile")?.Value ?? "";
+                sound.Volume = int.Parse(section.Element("Sound")?.Element("Volume")?.Value ?? MenuSound.DefaultVolume.ToString());
+            }
+            else
+            {
+                sound.File = section.Element("SoundFile")?.Value ?? "";
+                sound.Volume = int.Parse(section.Element("Volume")?.Value ?? MenuSound.DefaultVolume.ToString());
+            }
+
+            return sound;
+        }
+
+        private Notification ReadXmlNotification(XElement section)
+        {
+            Notification notif = new Notification();
+            if (section.Element("Notification") != null)
+            {
+                if (section.Element("Notification").Element("NotificationMessage") == null) return null;
+
+                notif.Icon = section.Element("Notification").Element("NotificationIcon")?.Value ?? Notification.DefaultIcon;
+                notif.Title = section.Element("Notification").Element("NotificationTitle")?.Value ?? Notification.DefaultTitle;
+                notif.Subtitle = section.Element("Notification").Element("NotificationSubtitle")?.Value ?? Notification.DefaultSubtitle;
+                notif.Message = section.Element("Notification").Element("NotificationMessage")?.Value ?? Notification.DefaultMessage;
+                notif.Delay = int.Parse(section.Element("Notification").Element("NotificationDelay")?.Value ?? Notification.DefaultDelay.ToString());
+                notif.Sound = bool.Parse(section.Element("Notification").Element("NotificationSound")?.Value ?? Notification.DefaultSound.ToString());
+            }
+            else
+            {
+                if (section.Element("NotificationMessage") == null) return null;
+
+                notif.Icon = section.Element("NotificationIcon")?.Value ?? Notification.DefaultIcon;
+                notif.Title = section.Element("NotificationTitle")?.Value ?? Notification.DefaultTitle;
+                notif.Subtitle = section.Element("NotificationSubtitle")?.Value ?? Notification.DefaultSubtitle;
+                notif.Message = section.Element("NotificationMessage")?.Value ?? Notification.DefaultMessage;
+                notif.Delay = int.Parse(section.Element("NotificationDelay")?.Value ?? Notification.DefaultDelay.ToString());
+                notif.Sound = bool.Parse(section.Element("NotificationSound")?.Value ?? Notification.DefaultSound.ToString());
+            }
+
+            return notif;
+        }
+
+
+        private void WriteXmlProfile(string path)
         {
             // Phone part
             try
@@ -117,36 +272,30 @@ namespace ProfileEditor
             try
             {
                 if (_menu != null)
-                    _profileFile.Add(GetMenuSection());
+                    _profileFile.Add(GetMenuSection(_menu.Items));
             }
             catch (Exception e)
             {
                 MessageBox.Show("Error while writing Menu informations: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            _profileFile.Save(_profilePath);
+            _profileFile.Save(path);
         }
 
         private XElement GetPhoneSection()
         {
-            phoneSection = new XElement("Phone");
+            XElement phoneSection = new XElement("Phone");
             phoneSection.Add(new XElement("ContactName", _phone.ContactName));
-            if (_phone.Bold != null) phoneSection.Add(new XElement("Bold", _phone.Bold));
-            phoneSection.Add(new XElement("ContactIcon", _phone.ContactIcon ?? "CHAR_DEFAULT"));
-            if (_phone.DialTimeout != null) phoneSection.Add(new XElement("DialTimeout", _phone.DialTimeout));
-
-            if (_phone.SoundFile != null) phoneSection.Add(new XElement("SoundFile", _phone.SoundFile));
-            if (_phone.Volume != null) phoneSection.Add(new XElement("Volume", _phone.Volume));
+            if (_phone.Bold != null && _phone.Bold != XmlPhone.DefaultBold) phoneSection.Add(new XElement("Bold", _phone.Bold));
+            phoneSection.Add(new XElement("ContactIcon", _phone.ContactIcon ?? XmlPhone.DefaultIcon));
+            if (_phone.DialTimeout != null && _phone.DialTimeout != XmlPhone.DefaultDialTimeout) phoneSection.Add(new XElement("DialTimeout", _phone.DialTimeout));
+            if (_phone.Sound != null) phoneSection.Add(GetSoundElement(_phone));
+            if (_phone.Notification != null) phoneSection.Add(GetNotificationElement(_phone));
+            if (_phone.Keys.Count > 0) phoneSection.Add(GetKeysElement(_phone));
 
             return phoneSection;
         }
-        private XElement GetMenuSection()
-        {
-            return GetItems(_menu.Items);
-        }
-
-
-        private XElement GetItems(List<NativeUIItem> menuItems)
+        private XElement GetMenuSection(List<NativeUIItem> menuItems)
         {
             XElement content = new XElement("Menu");
 
@@ -155,8 +304,8 @@ namespace ProfileEditor
                 switch (menuItem)
                 {
                     case NativeUIMenuSubmenu submenu:
-                        // Creating a new SubMenu
-                        XElement submenuSection = GetItems(submenu.Items);
+                        // Creating & filling a new SubMenu
+                        XElement submenuSection = GetMenuSection(submenu.Items);
 
                         // Renaming the submenu with its real name
                         submenuSection.Name = "SubMenu";
@@ -166,66 +315,108 @@ namespace ProfileEditor
                     case NativeUIMenuItem item:
                         // Creating a new SubItem
                         XElement subItem = new XElement("SubItem", new XAttribute("text", item.Text));
-                        FillItem(item, subItem);
-                        content.Add(subItem); // Simply closing
+                        FillXmlItem(item, subItem);
+                        content.Add(subItem);
                         break;
                 }
             }
 
             return content;
         }
-
-        private void GetItems2(XElement submenuSection, List<NativeUIItem> menuItems)
+        private NativeUIMenuSubmenu GetMenuSection(XElement menuItems)
         {
-            bool IsRoot = false;
-            if (submenuSection == null) IsRoot = true;
+            NativeUIMenuSubmenu content = new NativeUIMenuSubmenu();
 
-            foreach (var menuItem in menuItems)
+            foreach (XElement menuItem in menuItems.Elements())
             {
-                switch (menuItem)
+                if (menuItem.Name == "SubMenu")
                 {
-                    case NativeUIMenuSubmenu submenu:
-                        // Opening SubMenu
-                        submenuSection = new XElement("SubMenu", new XAttribute("text", submenu.Text));
-                        GetItems2(submenuSection, submenu.Items);
-                        break;
-                    case NativeUIMenuItem item:
-                        // Opening SubItem
-                        XElement subItem = new XElement("SubItem", new XAttribute("text", item.Text));
-                        FillItem(item, subItem);
-
-                        // Closing SubItem
-                        if (submenuSection != null)
-                            submenuSection.Add(subItem); // Adding to current submenu
-                        else
-                            menuSection.Add(subItem); // Simply closing
-                        break;
+                    NativeUIMenuSubmenu submenuItems = GetMenuSection(menuItem);
+                    submenuItems.Text = menuItem.Attribute("text").Value;
+                    submenuItems.ParentMenu = content;
+                    content.Items.Add(submenuItems);
                 }
+                else if (menuItem.Name == "SubItem")
+                {
+                    NativeUIMenuItem item = new NativeUIMenuItem(content);
+                    item.Text = menuItem.Attribute("text").Value;
+                    
+                    List<string> shortcut = new List<string>();
+                    foreach (XElement key in menuItem.Elements("Key"))
+                        shortcut.Add(key.Value);
 
-                // Closing SubMenu if opened
-                if (submenuSection != null)
-                {
-                    submenuSection.Add(submenuSection);
-                    submenuSection = null;
-                }
-                else
-                {
-                    menuSection.Add(submenuSection);
-                }
+                    item.Keys.AddRange(shortcut);
 
-                if (IsRoot)
-                {
-                    if (menuSection != null) menuSection.Add(submenuSection);
-                    submenuSection = null;
+                    content.Items.Add(item);
                 }
             }
+
+            return content;
         }
-        
-        private void FillItem(NativeUIMenuItem item, XElement subItem)
+
+        private void FillXmlItem(NativeUIMenuItem item, XElement subItem)
         {
+            if (item.Sound != null) subItem.Add(GetSoundElement(item));
+            if (item.Notification != null) subItem.Add(GetNotificationElement(item));
+
             foreach (string key in item.Keys)
                 subItem.Add(new XElement("Key", key));
         }
 
+        private XElement GetSoundElement(NativeUIMenuItem item)
+        {
+            return MenuSoundToXElement(item.Sound);
+        }
+        private XElement GetSoundElement(XmlPhone xmlphone)
+        {
+            return MenuSoundToXElement(xmlphone.Sound);
+        }
+        private XElement MenuSoundToXElement(MenuSound sound)
+        {
+            XElement soundItem = new XElement("Sound");
+
+            if (sound != null)
+            {
+                string fileName = Path.GetFileName(sound.File);
+                soundItem.Add(new XElement("SoundFile", fileName));
+                if (sound.Volume != MenuSound.DefaultVolume) soundItem.Add(new XElement("Volume", sound.Volume));
+            }
+
+            return soundItem;
+        }
+
+        private XElement GetNotificationElement(NativeUIMenuItem item)
+        {
+            return NotificationToXElement(item.Notification);
+        }
+        private XElement GetNotificationElement(XmlPhone xmlphone)
+        {
+            return NotificationToXElement(xmlphone.Notification);
+        }
+        private XElement NotificationToXElement(Notification notif)
+        {
+            XElement notificationItem = new XElement("Notification");
+
+            if (notif != null)
+            {
+                if (notif.Icon != Notification.DefaultIcon) notificationItem.Add(new XElement("NotificationIcon", notif.Icon));
+                if (notif.Title != Notification.DefaultTitle) notificationItem.Add(new XElement("NotificationTitle", notif.Title));
+                if (notif.Subtitle != Notification.DefaultSubtitle) notificationItem.Add(new XElement("NotificationSubtitle", notif.Subtitle));
+                notificationItem.Add(new XElement("NotificationMessage", notif.Message));
+                if (notif.Sound != Notification.DefaultSound) notificationItem.Add(new XElement("NotificationSound", notif.Sound));
+                if (notif.Delay != Notification.DefaultDelay) notificationItem.Add(new XElement("NotificationDelay", notif.Delay));
+            }
+
+            return notificationItem;
+        }
+
+        private XElement GetKeysElement(XmlPhone item)
+        {
+            XElement keysItem = new XElement("Keys");
+            foreach (string key in item.Keys)
+                keysItem.Add(new XElement("Key", key));
+
+            return keysItem;
+        }
     }
 }

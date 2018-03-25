@@ -8,13 +8,15 @@ namespace ProfileEditor
 {
     public class MenuSound
     {
+        public static readonly int DefaultVolume = 25;
+
         public string File { get; set; }
         public int Volume { get; set; }
 
         public MenuSound()
         {
             File = "";
-            Volume = 25;
+            Volume = DefaultVolume;
         }
         public MenuSound(MenuSound sound)
         {

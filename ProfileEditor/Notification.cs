@@ -8,6 +8,13 @@ namespace ProfileEditor
 {
     public class Notification
     {
+        public static readonly string DefaultIcon = "CHAR_DEFAULT";
+        public static readonly string DefaultTitle = "";
+        public static readonly string DefaultSubtitle = "";
+        public static readonly string DefaultMessage = "";
+        public static readonly int DefaultDelay = 0;
+        public static readonly bool DefaultSound = true;
+
         public string Icon { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
@@ -18,12 +25,12 @@ namespace ProfileEditor
 
         public Notification()
         {
-            Icon = "CHAR_DEFAULT";
-            Title = "";
-            Subtitle = "";
-            Message = "";
-            Delay = 0;
-            Sound = true;
+            Icon = DefaultIcon;
+            Title = DefaultTitle;
+            Subtitle = DefaultSubtitle;
+            Message = DefaultMessage;
+            Delay = DefaultDelay;
+            Sound = DefaultSound;
         }
 
         public Notification(Notification notif)
