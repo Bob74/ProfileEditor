@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Xml.Linq;
 
 namespace ProfileEditor
@@ -41,7 +42,9 @@ namespace ProfileEditor
         public string Banner { get; set; }
 
         // Shortcut to open the menu
-        public int Hotkey { get; set; }
+        public ModifierKeys HotkeyModifier { get; set; }
+        public Key Hotkey { get; set; }
+        public int GamepadHotkey { get; set; }
 
         // Menu items
         public List<NativeUIItem> Items { get; set; }
@@ -164,7 +167,7 @@ namespace ProfileEditor
                     if (profile?.Element("Menu") == null)
                         MessageBox.Show("Cannot find a <Key> entry in the <Phone> section: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
+                
                 return xmlphone;
             }
             else
@@ -181,14 +184,16 @@ namespace ProfileEditor
 
                 try
                 {
-                    int  shortcut = 0;
-
                     if (menu.Element("Keys") != null)
-                        shortcut = int.Parse(menu.Element("Keys").Element("Key")?.Value ?? "0");
+                    {
+                        xmlmenu.HotkeyModifier = (ModifierKeys)int.Parse(menu.Element("Keys").Element("ModifierKey")?.Value ?? "0");
+                        xmlmenu.Hotkey = (Key)int.Parse(menu.Element("Keys").Element("Key")?.Value ?? "0");
+                    }
                     else
-                        shortcut = int.Parse(menu.Element("Key")?.Value ?? "0");
-
-                    xmlmenu.Hotkey = shortcut;
+                    {
+                        xmlmenu.HotkeyModifier = (ModifierKeys)int.Parse(menu.Element("ModifierKey")?.Value ?? "0");
+                        xmlmenu.Hotkey = (Key)int.Parse(menu.Element("Key")?.Value ?? "0");
+                    }
                 }
                 catch
                 {
@@ -268,7 +273,21 @@ namespace ProfileEditor
             try
             {
                 if (_menu != null)
-                    _profileFile.Add(GetMenuSection(_menu.Items));
+                {
+                    XElement menuSection = GetMenuSection(_menu.Items);
+
+                    XElement keys = new XElement("Keys");
+                    keys.Add(new XElement("ModifierKey", (int)_menu.HotkeyModifier));
+
+                    if (_menu.GamepadHotkey != 0)
+                        keys.Add(new XElement("GamepadKey", _menu.GamepadHotkey));
+                    else
+                        keys.Add(new XElement("Key", (int)_menu.Hotkey));
+
+                    menuSection.AddFirst(keys);
+
+                    _profileFile.Add(menuSection);
+                }
             }
             catch (Exception e)
             {

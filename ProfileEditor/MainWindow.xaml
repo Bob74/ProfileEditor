@@ -192,7 +192,7 @@
                     </Grid.ColumnDefinitions>
                     <ComboBox Name="ComboBoxMenuHotkeyModifiers" Margin="0,5,5,5" Grid.Column="0" VerticalAlignment="Center" SelectedValuePath="Value" DisplayMemberPath="Key" Width="90" SelectionChanged="ComboBoxMenuHotkeyModifiers_SelectionChanged"/>
                     <TextBlock Text="+" Grid.Column="1" VerticalAlignment="Center"/>
-                    <TextBox Name="TextBoxMenuHotkey" Margin="5" Grid.Column="2" Grid.Row="1" IsReadOnly="True" IsReadOnlyCaretVisible="True" Width="50" PreviewKeyDown="TextBoxMenuHotkey_PreviewKeyDown"/>
+                    <TextBox Name="TextBoxMenuHotkey" Margin="5" Grid.Column="2" Grid.Row="1" IsReadOnly="True" IsReadOnlyCaretVisible="True" Width="50" PreviewKeyDown="TextBoxMenuHotkey_PreviewKeyDown" GotFocus="TextBoxMenuHotkey_GotFocus"/>
                     <TextBlock Name="TextBlockMenuHotkey" Text="" Margin="0,5,0,5" Grid.Column="3" VerticalAlignment="Center"/>
                 </Grid>
                

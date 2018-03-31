@@ -19,16 +19,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using SharpDX.XInput;
+using System.Threading;
+
 /*
     TODO:
     -----
     - Check la version pour Update
     - Check version de NMS pour Update
 
-    - Passer Hotkey et HotkeyModifier en "Key" et "ModifierKeys"
+    X Supporter les Gamepads pour activer les menus :
+        https://stackoverflow.com/questions/3929764/taking-input-from-a-joystick-with-c-sharp-net
 
+    X Passer Hotkey et HotkeyModifier en "Key" et "ModifierKeys"
+
+    - Lire la section clef du Gamepad
+    - Ne pas enregistrer les modifiers keys quand on utilise le Gamepad
     - Ne pas afficher les astérisques quand le group est disabled ?
-
     - Afficher les touches utilisées par les mods
 
     X Treeview: Coller doit instancier les objets à l'instant T
@@ -125,6 +132,14 @@ namespace ProfileEditor
         public static string BaseDir = Tools.GetGamePath()?.ToString() + "\\scripts\\NoMoreShortcuts" ?? AppDomain.CurrentDomain.BaseDirectory;
         public static readonly List<string> BannerFileExtensions = new List<string> { ".png", ".jpeg", ".jpg", ".bmp" };
         public static readonly List<string> SoundFileExtensions = new List<string> { ".wav" };
+        
+        public static readonly Dictionary<string, ModifierKeys> DictionaryModifierKeys = new Dictionary<string, ModifierKeys>
+            {
+                { "None", ModifierKeys.None },
+                { "Ctrl", ModifierKeys.Control },
+                { "Alt", ModifierKeys.Alt },
+                { "Shift", ModifierKeys.Shift }
+            };
 
         public static List<PhoneContact> GetPhoneContactCollection { get => PhoneContactCollection; }
         static List<PhoneContact> PhoneContactCollection = new List<PhoneContact>();
@@ -138,6 +153,8 @@ namespace ProfileEditor
         NotificationPreviewWindow NotificationPreviewWindow = null;
         MenuItemConfiguration MenuItemConfiguration = null;
         MenuSubmenuConfiguration MenuSubmenuConfiguration = null;
+
+        Thread GamePadThread = null;
 
         NativeUIItem ClipBoardItem;
         bool IsClipBoardItemCut = false;
@@ -189,10 +206,13 @@ namespace ProfileEditor
                     TextBoxMenuBanner.Text = System.IO.Path.GetDirectoryName(profilePath) + "\\" + xmlmenu.Banner;
 
                 // Hotkey
+                if (xmlmenu.HotkeyModifier != 0)
+                    if (DictionaryModifierKeys.ContainsValue(xmlmenu.HotkeyModifier))
+                        ComboBoxMenuHotkeyModifiers.SelectedValue = DictionaryModifierKeys.FirstOrDefault(x => x.Value == xmlmenu.HotkeyModifier).Key;
+
                 if (xmlmenu.Hotkey != 0)
-                {
                     TextBoxMenuHotkey.Text = xmlmenu.Hotkey.ToString();
-                }
+                
 
                 // Items
                 RootMenu.Items.AddRange(xmlmenu.Items);
@@ -226,13 +246,7 @@ namespace ProfileEditor
             ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == XmlPhone.DefaultIcon);
 
 
-            ComboBoxMenuHotkeyModifiers.ItemsSource = new Dictionary<string, ModifierKeys>
-            {
-                { "None", ModifierKeys.None},
-                { "Ctrl", ModifierKeys.Control},
-                { "Alt", ModifierKeys.Alt},
-                { "Shift", ModifierKeys.Shift}
-            };
+            ComboBoxMenuHotkeyModifiers.ItemsSource = DictionaryModifierKeys;
 
             RootMenu = new NativeUIMenu()
             {
@@ -838,15 +852,24 @@ namespace ProfileEditor
                 XmlMenu menu = null;
                 if (CheckBoxMenu.IsChecked ?? false)
                 {
-                    int shortcut = 0;
+                    ModifierKeys hotkeyModifier = (ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (ModifierKeys)ComboBoxMenuHotkeyModifiers.SelectedValue : 0;
+                    Key hotkey = 0;
+                    int gamepadHotkey = 0;
 
-                    if (TextBoxMenuHotkey.Text != "")
-                        shortcut = int.Parse(TextBoxMenuHotkey.Text);
+                    if (TextBlockMenuHotkey.Text != "")
+                    {
+                        if (TextBlockMenuHotkey.Text.Contains("GAMEPAD"))
+                            gamepadHotkey = int.Parse(TextBoxMenuHotkey.Text);
+                        else
+                            hotkey = (Key)int.Parse(TextBoxMenuHotkey.Text);
+                    }
 
                     menu = new XmlMenu()
                     {
                         Banner = TextBoxMenuBanner.Text,
-                        Hotkey = shortcut,
+                        Hotkey = hotkey,
+                        GamepadHotkey = gamepadHotkey,
+                        HotkeyModifier = hotkeyModifier,
                         Items = RootMenu.Items
                     };
                 }
@@ -864,31 +887,115 @@ namespace ProfileEditor
 
         private void ComboBoxMenuHotkeyModifiers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            string[] keyCombination = TextBlockMenuHotkey.Text.Split(new string[] { " + " }, StringSplitOptions.None);
+            string currentKey = keyCombination[keyCombination.GetUpperBound(0)];
+
             if (ComboBoxMenuHotkeyModifiers.SelectedValue != null)
             {
                 if ((int)ComboBoxMenuHotkeyModifiers.SelectedValue != 0)
                 {
-                    if (TextBoxMenuHotkey.Text != "")
-                        TextBlockMenuHotkey.Text = ((KeyValuePair<string, ModifierKeys>)e.AddedItems[0]).Key + " + " + TextBoxMenuHotkey.Text;
-                    else
-                        TextBlockMenuHotkey.Text = ((KeyValuePair<string, ModifierKeys>)e.AddedItems[0]).Key;
+                    TextBlockMenuHotkey.Text = ((KeyValuePair<string, ModifierKeys>)e.AddedItems[0]).Key + " + " + currentKey;
+                    return;
                 }
             }
-            else
-                TextBlockMenuHotkey.Text = TextBoxMenuHotkey.Text;
+            
+            TextBlockMenuHotkey.Text = currentKey;
         }
+
 
         private void TextBoxMenuHotkey_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            TextBoxMenuHotkey.Text = ((int)e.Key).ToString();
+            int pressedKey = KeyInterop.VirtualKeyFromKey(e.Key);
+            string pressedKeyName = ((System.Windows.Forms.Keys)pressedKey).ToString();
+
+            TextBoxMenuHotkey.Text = pressedKey.ToString();
 
             if (ComboBoxMenuHotkeyModifiers.SelectedValue != null)
             {
                 if ((int)ComboBoxMenuHotkeyModifiers.SelectedValue != 0)
-                    TextBlockMenuHotkey.Text = ComboBoxMenuHotkeyModifiers.Text + " + " + e.Key.ToString();
+                {
+                    TextBlockMenuHotkey.Text = ComboBoxMenuHotkeyModifiers.Text + " + " + pressedKeyName;
+                    return;
+                }
             }
-            else
-                TextBlockMenuHotkey.Text = e.Key.ToString();
+
+            TextBlockMenuHotkey.Text = pressedKeyName;
+        }
+
+        private void TextBoxMenuHotkey_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // Initialize XInput
+            Controller[] controllers = new[] { new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three), new Controller(UserIndex.Four) };
+
+            // Get 1st controller available
+            Controller controller = null;
+            foreach (var selectControler in controllers)
+            {
+                if (selectControler.IsConnected)
+                {
+                    controller = selectControler;
+                    break;
+                }
+            }
+
+            GamePadThread = new Thread(GamePadKeyPressDetection);
+            GamePadThread.Start(controller);
+        }
+
+        private void GamePadKeyPressDetection(object objectState)
+        {
+            Controller controller = objectState as Controller;
+
+            if (controller != null)
+            {
+                bool TextBoxIsFocused = TextBoxMenuHotkey.Dispatcher.Invoke<bool>(() => {
+                    return TextBoxMenuHotkey.IsFocused;
+                });
+
+                while (TextBoxIsFocused)
+                {
+                    // Poll events from joystick
+                    if (controller.IsConnected)
+                    {
+                        State currentState = controller.GetState();
+
+                        if (currentState.Gamepad.Buttons != GamepadButtonFlags.None)
+                        {
+                            TextBoxMenuHotkey.Dispatcher.Invoke(() => {
+                                TextBoxMenuHotkey.Text = ((long)currentState.Gamepad.Buttons).ToString();
+                            });
+                            
+                            string ComboBoxValue = ComboBoxMenuHotkeyModifiers.Dispatcher.Invoke<string>(() => {
+                                return ComboBoxMenuHotkeyModifiers.Text;
+                            });
+
+                            if (ComboBoxValue != "" && ComboBoxValue != "None")
+                            {
+                                string modifier = ComboBoxMenuHotkeyModifiers.Dispatcher.Invoke<string>(() => {
+                                    return ComboBoxMenuHotkeyModifiers.Text;
+                                });
+                                TextBlockMenuHotkey.Dispatcher.Invoke(() => {
+                                    TextBlockMenuHotkey.Text = modifier + " + " + currentState.Gamepad.Buttons.ToString() + " (GAMEPAD) ";
+                                });
+                                continue;
+                            }
+                            
+                            TextBlockMenuHotkey.Dispatcher.Invoke(() => {
+                                TextBlockMenuHotkey.Text = currentState.Gamepad.Buttons.ToString() + " (GAMEPAD)";
+                            });
+                        }
+
+                        // Give us time to release multiple buttons at once
+                        Thread.Sleep(100);
+                    }
+
+                    // Check if the TextBox is still focused
+                    TextBoxIsFocused = TextBoxMenuHotkey.Dispatcher.Invoke<bool>(() => {
+                        return TextBoxMenuHotkey.IsFocused;
+                    });
+                }
+
+            }
         }
     }
 }
