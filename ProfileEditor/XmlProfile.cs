@@ -290,7 +290,7 @@ namespace ProfileEditor
                     }
 
                     // Adding Keys
-                    if ((int)_menu.HotkeyModifier != 0 && (int)_menu.Hotkey != 0 && _menu.GamepadHotkey != 0)
+                    if ((int)_menu.HotkeyModifier != 0 || (int)_menu.Hotkey != 0 || _menu.GamepadHotkey != 0)
                     {
                         XElement keys = new XElement("Keys");
                         if (_menu.GamepadHotkey != 0)

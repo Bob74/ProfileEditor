@@ -13,6 +13,12 @@ using System.Windows.Media.Imaging;
 using SharpDX.XInput;
 
 /*
+  
+    1.0.1 (01/04/2018): - Fixed an issue where menu hotkey wouldn't be saved
+                        - When exporting, it will display an error message on error.
+
+    1.0.0 (01/04/2018): - Initial release
+    
     TODO:
     -----
     - Afficher les touches utilisées par les mods
@@ -1048,63 +1054,86 @@ namespace ProfileEditor
                 {
                     filePath = dial.FileName;
 
-                    // Phone
                     XmlPhone phone = null;
-                    if (CheckBoxPhone.IsChecked ?? false)
+                    XmlMenu menu = null;
+
+                    // Phone
+                    try
                     {
-                        List<string> shortcut = new List<string>();
-
-                        // Add the keys only if there is no menu
-                        if (!CheckBoxMenu.IsChecked ?? true)
+                        if (CheckBoxPhone.IsChecked ?? false)
                         {
-                            foreach (string key in TextBoxPhoneShortcut.Text.Replace("\r", "").Split('\n'))
-                                if (key != "") shortcut.Add(key);
+                            List<string> shortcut = new List<string>();
+
+                            // Add the keys only if there is no menu
+                            if (!CheckBoxMenu.IsChecked ?? true)
+                            {
+                                foreach (string key in TextBoxPhoneShortcut.Text.Replace("\r", "").Split('\n'))
+                                    if (key != "") shortcut.Add(key);
+                            }
+
+                            phone = new XmlPhone()
+                            {
+                                ContactName = TextBoxPhoneContactName.Text,
+                                ContactIcon = TextBoxPhoneContactIcon.Text,
+                                Keys = shortcut
+                            };
+
+                            if (CheckBoxPhoneContactNameBold.IsChecked ?? false) phone.Bold = true;
+                            if (IntegerUpDownPhoneDialing.Value != null) phone.DialTimeout = IntegerUpDownPhoneDialing.Value;
+                            if (TextBoxPhoneSound.Text != "") phone.Sound = new MenuSound() { File = TextBoxPhoneSound.Text, Volume = (int)SliderSoundVolume.Value };
+                            if (PhoneNotification != null) phone.Notification = PhoneNotification;
                         }
-
-                        phone = new XmlPhone()
-                        {
-                            ContactName = TextBoxPhoneContactName.Text,
-                            ContactIcon = TextBoxPhoneContactIcon.Text,
-                            Keys = shortcut
-                        };
-
-                        if (CheckBoxPhoneContactNameBold.IsChecked ?? false) phone.Bold = true;
-                        if (IntegerUpDownPhoneDialing.Value != null) phone.DialTimeout = IntegerUpDownPhoneDialing.Value;
-                        if (TextBoxPhoneSound.Text != "") phone.Sound = new MenuSound() { File = TextBoxPhoneSound.Text, Volume = (int)SliderSoundVolume.Value };
-                        if (PhoneNotification != null) phone.Notification = PhoneNotification;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error creating the phone section: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
                     // Menu
-                    XmlMenu menu = null;
-                    if (CheckBoxMenu.IsChecked ?? false)
+                    try
                     {
-                        ModifierKeys hotkeyModifier = (ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (ModifierKeys)ComboBoxMenuHotkeyModifiers.SelectedValue : 0;
-                        Key hotkey = 0;
-                        int gamepadHotkey = 0;
-
-                        if (TextBlockMenuHotkey.Text != "")
+                        if (CheckBoxMenu.IsChecked ?? false)
                         {
-                            if (TextBlockMenuHotkey.Text.Contains("GAMEPAD"))
+                            ModifierKeys hotkeyModifier = (ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (ModifierKeys)ComboBoxMenuHotkeyModifiers.SelectedValue : 0;
+                            Key hotkey = 0;
+                            int gamepadHotkey = 0;
+
+                            if (TextBlockMenuHotkey.Text != "")
                             {
-                                gamepadHotkey = int.Parse(TextBoxMenuHotkey.Text);
-                                hotkeyModifier = 0; // No keyboard modifier when using a gamepad
+                                if (TextBlockMenuHotkey.Text.Contains("GAMEPAD"))
+                                {
+                                    gamepadHotkey = int.Parse(TextBoxMenuHotkey.Text);
+                                    hotkeyModifier = 0; // No keyboard modifier when using a gamepad
+                                }
+                                else
+                                    hotkey = (Key)int.Parse(TextBoxMenuHotkey.Text);
                             }
-                            else
-                                hotkey = (Key)int.Parse(TextBoxMenuHotkey.Text);
+
+                            menu = new XmlMenu()
+                            {
+                                Banner = TextBoxMenuBanner.Text,
+                                Hotkey = hotkey,
+                                GamepadHotkey = gamepadHotkey,
+                                HotkeyModifier = hotkeyModifier,
+                                Items = RootMenu.Items
+                            };
                         }
-
-                        menu = new XmlMenu()
-                        {
-                            Banner = TextBoxMenuBanner.Text,
-                            Hotkey = hotkey,
-                            GamepadHotkey = gamepadHotkey,
-                            HotkeyModifier = hotkeyModifier,
-                            Items = RootMenu.Items
-                        };
                     }
-
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error creating the menu section: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    
                     XmlProfile profile = new XmlProfile(phone, menu);
-                    profile.ExportProfile(filePath);
+
+                    try
+                    {
+                        profile.ExportProfile(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occured while exporting the file: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
