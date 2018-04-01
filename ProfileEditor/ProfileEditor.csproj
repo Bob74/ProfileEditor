@@ -1462,9 +1462,6 @@
     <Resource Include="Resources\cut.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\edit.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\paste.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1475,6 +1472,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\add2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\edit.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

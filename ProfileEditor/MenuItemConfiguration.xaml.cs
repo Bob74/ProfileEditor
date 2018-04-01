@@ -131,6 +131,8 @@ namespace ProfileEditor
                 // Sound
                 if (File.Exists(TextBoxSound.Text))
                     Item.Sound = new MenuSound() { File = TextBoxSound.Text, Volume = (int)SliderSoundVolume.Value };
+                else
+                    Item.Sound = null;
 
                 // Keys
                 Item.Keys.Clear();

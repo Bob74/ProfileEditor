@@ -1,43 +1,34 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using SharpDX.XInput;
-using System.Threading;
 
 /*
     TODO:
     -----
-    - Check la version pour Update
-    - Check version de NMS pour Update
+    - Afficher les touches utilisées par les mods
+    - Permettre de bouger les éléments du menu en haut et en bas (Ctrl + UP)
 
+    X Check la version pour Update
+    X Icône pour Edit item
+    X Autres icônes pour Add
+    X Lire la section clef du Gamepad
+    X Limiter le nombre de caractères dans les notifications
+    X Ajouter une aide en dessous du Menu TreeView
+    X Ne pas enregistrer les modifiers keys quand on utilise le Gamepad
+    X Sauvegarder Bold
     X Supporter les Gamepads pour activer les menus :
         https://stackoverflow.com/questions/3929764/taking-input-from-a-joystick-with-c-sharp-net
-
-    X Passer Hotkey et HotkeyModifier en "Key" et "ModifierKeys"
-
-    - Lire la section clef du Gamepad
-    - Ne pas enregistrer les modifiers keys quand on utilise le Gamepad
-    - Ne pas afficher les astérisques quand le group est disabled ?
-    - Afficher les touches utilisées par les mods
-
+    X Passer Hotkey et HotkeyModifier en "(Key)" et "(ModifierKeys)"
     X Treeview: Coller doit instancier les objets à l'instant T
     X Touches à envoyer pour menu items
     X Son pour menu items
@@ -154,6 +145,7 @@ namespace ProfileEditor
         MenuItemConfiguration MenuItemConfiguration = null;
         MenuSubmenuConfiguration MenuSubmenuConfiguration = null;
 
+        Thread CheckUpdates = null;
         Thread GamePadThread = null;
 
         NativeUIItem ClipBoardItem;
@@ -182,8 +174,11 @@ namespace ProfileEditor
                 IntegerUpDownPhoneDialing.Value = xmlphone.DialTimeout;
 
                 // Sound
-                TextBoxPhoneSound.Text = xmlphone.Sound.File;
-                SliderSoundVolume.Value = xmlphone.Sound.Volume;
+                if (xmlphone.Sound.File != "")
+                {
+                    TextBoxPhoneSound.Text = Path.GetDirectoryName(profilePath) + "\\" + xmlphone.Sound.File;
+                    SliderSoundVolume.Value = xmlphone.Sound.Volume;
+                }
 
                 // Notification
                 PhoneNotification = xmlphone.Notification;
@@ -203,7 +198,7 @@ namespace ProfileEditor
 
                 // Banner
                 if (xmlmenu.Banner != "")
-                    TextBoxMenuBanner.Text = System.IO.Path.GetDirectoryName(profilePath) + "\\" + xmlmenu.Banner;
+                    TextBoxMenuBanner.Text = Path.GetDirectoryName(profilePath) + "\\" + xmlmenu.Banner;
 
                 // Hotkey
                 if (xmlmenu.HotkeyModifier != 0)
@@ -212,7 +207,9 @@ namespace ProfileEditor
 
                 if (xmlmenu.Hotkey != 0)
                     TextBoxMenuHotkey.Text = xmlmenu.Hotkey.ToString();
-                
+
+                if (xmlmenu.GamepadHotkey != 0)
+                    TextBoxMenuHotkey.Text = xmlmenu.GamepadHotkey.ToString();
 
                 // Items
                 RootMenu.Items.AddRange(xmlmenu.Items);
@@ -226,7 +223,7 @@ namespace ProfileEditor
         {
             InitializeComponent();
 
-            string[] resources = GetResourceNames();
+            string[] resources = Tools.GetResourceNames();
 
             foreach (string res in resources)
             {
@@ -245,8 +242,8 @@ namespace ProfileEditor
             ComboBoxPhoneContactIcons.ItemsSource = PhoneContactCollection;
             ComboBoxPhoneContactIcons.SelectedIndex = PhoneContactCollection.FindIndex(x => x.Name == XmlPhone.DefaultIcon);
 
-
             ComboBoxMenuHotkeyModifiers.ItemsSource = DictionaryModifierKeys;
+            ComboBoxMenuHotkeyModifiers.SelectedIndex = 0;
 
             RootMenu = new NativeUIMenu()
             {
@@ -258,22 +255,43 @@ namespace ProfileEditor
 
             TreeViewMenu.ItemsSource = Menu;
             ItemsControlPreviewMenu.ItemsSource = RootMenu.Items;
+
+            // Check for updates
+            Thread checkUpdates = new Thread(CheckForUpdates);
+            checkUpdates.Start();
         }
 
-        public static string[] GetResourceNames()
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var asm = Assembly.GetEntryAssembly();
-            string resName = asm.GetName().Name + ".g.resources";
-            using (var stream = asm.GetManifestResourceStream(resName))
-            using (var reader = new ResourceReader(stream))
+            if (CheckUpdates != null) CheckUpdates.Abort();
+        }
+
+        private void CheckForUpdates()
+        {
+            if (Tools.IsUpdateAvailable())
             {
-                return reader.Cast<DictionaryEntry>().Select(entry => (string)entry.Key).ToArray();
+                StatusBarUpdates.Dispatcher.Invoke(() => {
+                    StatusBarUpdates.Background = Brushes.LightYellow;
+                });
+
+                TextBlockUpdateProfileEditor.Dispatcher.Invoke(() => {
+                    TextBlockUpdateProfileEditor.Text = "A new version of Profile Editor is available!";
+                });
+
+                TextBlockUpdateProfileEditorLink.Dispatcher.Invoke(() => {
+                    TextBlockUpdateProfileEditorLink.Text = "Click to visit the download page";
+                });
             }
         }
 
+        private void TextBlockUpdateProfileEditorLink_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Bob74/ProfileEditor");
+        }
 
+        #region GUI - Phone
         /*
-                PHONE
+            PHONE
         */
         private void CheckBoxPhone_Checked(object sender, RoutedEventArgs e)
         {
@@ -366,8 +384,11 @@ namespace ProfileEditor
         }
 
 
+        #endregion
+
+        #region GUI - Menu
         /*
-                MENU
+            MENU
         */
         private void CheckBoxMenu_Checked(object sender, RoutedEventArgs e)
         {
@@ -383,6 +404,7 @@ namespace ProfileEditor
             ItemsControlPreviewMenu.Visibility = Visibility.Hidden;
         }
 
+        // Banner
         private void ButtonMenuBannerBrowse_Click(object sender, RoutedEventArgs e)
         {
             string filter = "Image files|";
@@ -398,7 +420,6 @@ namespace ProfileEditor
                 RefreshTreeview();
             }
         }
-        
         private void TextBoxMenuBanner_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (File.Exists(TextBoxMenuBanner.Text) && BannerFileExtensions.Any(TextBoxMenuBanner.Text.EndsWith))
@@ -417,7 +438,9 @@ namespace ProfileEditor
                     }
             }
         }
+        #endregion
 
+        #region Preview - Phone
         /*
                 PREVIEW PHONE
         */
@@ -496,8 +519,9 @@ namespace ProfileEditor
 
             NotificationConfiguration = null;
         }
+        #endregion
 
-
+        #region Preview - Menu
         /*
                 PREVIEW MENU
         */
@@ -559,8 +583,9 @@ namespace ProfileEditor
             ItemsControlPreviewMenu.ItemsSource = RootMenu.Items;
             RefreshTreeview();
         }
+        #endregion
 
-
+        #region TreeView - Context menu
         /*
             TreeView Submenu + Item : Context menu
         */
@@ -649,7 +674,7 @@ namespace ProfileEditor
         }
 
         /*
-            TreeView Item : Context menu
+            TreeView Item specific : Context menu
         */
         // TreeViewItem selection using Right-click
         // https://www.telerik.com/forums/selecting-node-on-mouse-right-click
@@ -675,19 +700,18 @@ namespace ProfileEditor
         }
 
         /*
-            TreeView Main : Context menu
+            TreeView Main specific : Context menu
         */
         // Clear all
         private void TreeViewMainContextClear_Click(object sender, RoutedEventArgs e)
         {
             RootMenu.Items.Clear();
+            TextBoxMenuBanner.Text = "";
             RefreshTreeview();
         }
+        #endregion
 
-
-
-
-
+        #region TreeView - Context actions
         internal void AddMenuItem(NativeUIItem node, ItemType itemType)
         {
             if (itemType == ItemType.Item)
@@ -769,8 +793,9 @@ namespace ProfileEditor
 
             RefreshTreeview();
         }
+        #endregion
 
-
+        #region TreeView - Functions
         // Return the item closest node.
         // If the item is a node, the closest node will be the item.
         // Else, it will be its parent.
@@ -810,81 +835,15 @@ namespace ProfileEditor
             return item.ParentMenu ?? RootMenu;
         }
 
-
-
         internal void RefreshTreeview()
         {
             TreeViewMenu.Items.Refresh();
             ItemsControlPreviewMenu.Items.Refresh();
             TreeViewMenu.Focus();
         }
+        #endregion
 
-        private void ButtonGenerate_Click(object sender, RoutedEventArgs e)
-        {
-            string filePath = "";
-
-            SaveFileDialog dial = new SaveFileDialog() { InitialDirectory = BaseDir, Filter = "XML file|*.xml;" };
-            if (dial.ShowDialog() == true)
-            {
-                filePath = dial.FileName;
-
-                // Phone
-                XmlPhone phone = null;
-                if (CheckBoxPhone.IsChecked ?? false)
-                {
-                    List<string> shortcut = new List<string>();
-                    foreach (string key in TextBoxPhoneShortcut.Text.Replace("\r", "").Split('\n'))
-                        if (key != "") shortcut.Add(key);
-
-                    phone = new XmlPhone()
-                    {
-                        ContactName = TextBoxPhoneContactName.Text,
-                        ContactIcon = TextBoxPhoneContactIcon.Text,
-                        Keys = shortcut
-                    };
-
-                    if (IntegerUpDownPhoneDialing.Value != null) phone.DialTimeout = IntegerUpDownPhoneDialing.Value;
-                    if (TextBoxPhoneSound.Text != "") phone.Sound = new MenuSound() { File = TextBoxPhoneSound.Text, Volume = (int)SliderSoundVolume.Value };
-                    if (PhoneNotification != null) phone.Notification = PhoneNotification;
-                }
-
-                // Menu
-                XmlMenu menu = null;
-                if (CheckBoxMenu.IsChecked ?? false)
-                {
-                    ModifierKeys hotkeyModifier = (ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (ModifierKeys)ComboBoxMenuHotkeyModifiers.SelectedValue : 0;
-                    Key hotkey = 0;
-                    int gamepadHotkey = 0;
-
-                    if (TextBlockMenuHotkey.Text != "")
-                    {
-                        if (TextBlockMenuHotkey.Text.Contains("GAMEPAD"))
-                            gamepadHotkey = int.Parse(TextBoxMenuHotkey.Text);
-                        else
-                            hotkey = (Key)int.Parse(TextBoxMenuHotkey.Text);
-                    }
-
-                    menu = new XmlMenu()
-                    {
-                        Banner = TextBoxMenuBanner.Text,
-                        Hotkey = hotkey,
-                        GamepadHotkey = gamepadHotkey,
-                        HotkeyModifier = hotkeyModifier,
-                        Items = RootMenu.Items
-                    };
-                }
-
-                XmlProfile profile = new XmlProfile(phone, menu);
-                profile.ExportProfile(filePath);
-            }
-        }
-
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            new CreateLoadProfile().Show();
-            Close();
-        }
-
+        #region Menu - Hotkey
         private void ComboBoxMenuHotkeyModifiers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string[] keyCombination = TextBlockMenuHotkey.Text.Split(new string[] { " + " }, StringSplitOptions.None);
@@ -898,7 +857,7 @@ namespace ProfileEditor
                     return;
                 }
             }
-            
+
             TextBlockMenuHotkey.Text = currentKey;
         }
 
@@ -964,7 +923,7 @@ namespace ProfileEditor
                             TextBoxMenuHotkey.Dispatcher.Invoke(() => {
                                 TextBoxMenuHotkey.Text = ((long)currentState.Gamepad.Buttons).ToString();
                             });
-                            
+
                             string ComboBoxValue = ComboBoxMenuHotkeyModifiers.Dispatcher.Invoke<string>(() => {
                                 return ComboBoxMenuHotkeyModifiers.Text;
                             });
@@ -979,7 +938,7 @@ namespace ProfileEditor
                                 });
                                 continue;
                             }
-                            
+
                             TextBlockMenuHotkey.Dispatcher.Invoke(() => {
                                 TextBlockMenuHotkey.Text = currentState.Gamepad.Buttons.ToString() + " (GAMEPAD)";
                             });
@@ -996,6 +955,162 @@ namespace ProfileEditor
                 }
 
             }
+        }
+
+        private void ButtonMenuClearHotkey_Click(object sender, RoutedEventArgs e)
+        {
+            TextBoxMenuHotkey.Text = "";
+            ComboBoxMenuHotkeyModifiers.SelectedIndex = 0;
+            TextBlockMenuHotkey.Text = "";
+        }
+        #endregion
+
+
+
+        private bool IsReadyToGenerate()
+        {
+            // Common
+            // ******
+
+            // Phone
+            if (CheckBoxPhone.IsChecked ?? false)
+            {
+                // Empty contact name
+                if (TextBoxPhoneContactName.Text == "")
+                {
+                    MessageBox.Show("You must specify a phone contact name.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
+            }
+
+            // Menu
+            if (CheckBoxMenu.IsChecked ?? false)
+            {
+                // No items
+                if (RootMenu.Items.Count <= 0)
+                {
+                    MessageBox.Show("If you use a menu, you must create items or submenus. Right click on the \"Menu\" item inside the frame in the menu section to add items.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
+            }
+
+            // Choice dependent
+            // ****************
+
+            // No Phone and no Menu
+            if ((!CheckBoxPhone.IsChecked ?? true) && (!CheckBoxMenu.IsChecked ?? true))
+            {
+                MessageBox.Show("You must fill at least the Phone part or the Menu part.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+
+            // Menu only
+            if ((!CheckBoxPhone.IsChecked ?? true) && (CheckBoxMenu.IsChecked ?? false))
+            {
+                // No hotkey or Modifier
+                if ((TextBoxMenuHotkey.Text == "" && ((ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (int)ComboBoxMenuHotkeyModifiers.SelectedValue : 0) == 0))
+                {
+                    MessageBox.Show("Since there is no phone contact, you must set a hotkey to open the menu.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
+            }
+
+            // Phone only
+            if ((CheckBoxPhone.IsChecked ?? false) && (!CheckBoxMenu.IsChecked ?? true))
+            {
+                // Phone + No menu + No shortcut
+                if (TextBoxPhoneShortcut.Text == "" && (!CheckBoxMenu.IsChecked ?? true))
+                {
+                    MessageBox.Show("You must specify a shortcut to press when the phone contact will be selected.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
+            }
+
+            // Phone and Menu
+            if ((CheckBoxPhone.IsChecked ?? false) && (CheckBoxMenu.IsChecked ?? false))
+            {
+
+            }
+
+            return true;
+        }
+
+        private void ButtonGenerate_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsReadyToGenerate())
+            {
+                string filePath = "";
+
+                SaveFileDialog dial = new SaveFileDialog() { InitialDirectory = BaseDir, Filter = "XML file|*.xml;" };
+                if (dial.ShowDialog() == true)
+                {
+                    filePath = dial.FileName;
+
+                    // Phone
+                    XmlPhone phone = null;
+                    if (CheckBoxPhone.IsChecked ?? false)
+                    {
+                        List<string> shortcut = new List<string>();
+
+                        // Add the keys only if there is no menu
+                        if (!CheckBoxMenu.IsChecked ?? true)
+                        {
+                            foreach (string key in TextBoxPhoneShortcut.Text.Replace("\r", "").Split('\n'))
+                                if (key != "") shortcut.Add(key);
+                        }
+
+                        phone = new XmlPhone()
+                        {
+                            ContactName = TextBoxPhoneContactName.Text,
+                            ContactIcon = TextBoxPhoneContactIcon.Text,
+                            Keys = shortcut
+                        };
+
+                        if (CheckBoxPhoneContactNameBold.IsChecked ?? false) phone.Bold = true;
+                        if (IntegerUpDownPhoneDialing.Value != null) phone.DialTimeout = IntegerUpDownPhoneDialing.Value;
+                        if (TextBoxPhoneSound.Text != "") phone.Sound = new MenuSound() { File = TextBoxPhoneSound.Text, Volume = (int)SliderSoundVolume.Value };
+                        if (PhoneNotification != null) phone.Notification = PhoneNotification;
+                    }
+
+                    // Menu
+                    XmlMenu menu = null;
+                    if (CheckBoxMenu.IsChecked ?? false)
+                    {
+                        ModifierKeys hotkeyModifier = (ComboBoxMenuHotkeyModifiers.SelectedValue != null) ? (ModifierKeys)ComboBoxMenuHotkeyModifiers.SelectedValue : 0;
+                        Key hotkey = 0;
+                        int gamepadHotkey = 0;
+
+                        if (TextBlockMenuHotkey.Text != "")
+                        {
+                            if (TextBlockMenuHotkey.Text.Contains("GAMEPAD"))
+                            {
+                                gamepadHotkey = int.Parse(TextBoxMenuHotkey.Text);
+                                hotkeyModifier = 0; // No keyboard modifier when using a gamepad
+                            }
+                            else
+                                hotkey = (Key)int.Parse(TextBoxMenuHotkey.Text);
+                        }
+
+                        menu = new XmlMenu()
+                        {
+                            Banner = TextBoxMenuBanner.Text,
+                            Hotkey = hotkey,
+                            GamepadHotkey = gamepadHotkey,
+                            HotkeyModifier = hotkeyModifier,
+                            Items = RootMenu.Items
+                        };
+                    }
+
+                    XmlProfile profile = new XmlProfile(phone, menu);
+                    profile.ExportProfile(filePath);
+                }
+            }
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            new CreateLoadProfile().Show();
+            Close();
         }
     }
 }

@@ -54,14 +54,21 @@ namespace ProfileEditor
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            Notification.Icon = TextBoxIcon.Text;
-            Notification.Title = TextBoxTitle.Text;
-            Notification.Subtitle = TextBoxSubtitle.Text;
-            Notification.Message = TextBoxMessage.Text;
-            Notification.Sound = CheckBoxSound.IsChecked ?? false;
-            Notification.Delay = IntegerUpDownDelay.Value ?? 0;
+            if (TextBoxMessage.Text != "")
+            {
+                Notification.Icon = TextBoxIcon.Text;
+                Notification.Title = TextBoxTitle.Text;
+                Notification.Subtitle = TextBoxSubtitle.Text;
+                Notification.Message = TextBoxMessage.Text;
+                Notification.Sound = CheckBoxSound.IsChecked ?? false;
+                Notification.Delay = IntegerUpDownDelay.Value ?? 0;
 
-            DialogResult = true;
+                DialogResult = true;
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("You must enter at least the message.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
@@ -109,7 +116,7 @@ namespace ProfileEditor
             if (seconds > 1.0f) sec += "s";
 
             if (TextBlockDelay != null)
-                TextBlockDelay.Text = milisec + " (" + seconds + " " + sec + ") before showing the notification.";
+                TextBlockDelay.Text = milisec + " (" + seconds + " " + sec + ")";
         }
     }
 }

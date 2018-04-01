@@ -24,11 +24,11 @@
 
         <!-- Item text-->
         <Label Content="*" Grid.Column="0" Grid.Row="0" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold"/>
-        <TextBlock Text="Item text:" Margin="5" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Item text:" Margin="5" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" ToolTip="The name of the item to display in the menu."/>
         <TextBox Name="TextBoxItemText" Margin="0,5,5,5" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center"/>
 
         <!-- Sound file -->
-        <TextBlock Text="Sound file:" Margin="5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+        <TextBlock Text="Sound file:" Margin="5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" ToolTip="Sound to play when the contact pick up the phone. The sound must be placed in the same folder as the profile."/>
         <Grid Grid.Column="2" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -39,7 +39,7 @@
         </Grid>
 
         <!-- Sound volume -->
-        <TextBlock Text="Sound volume:" Margin="5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+        <TextBlock Text="Sound volume:" Margin="5" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" ToolTip="The volume the sound will be played."/>
         <Grid Grid.Column="2" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -50,7 +50,7 @@
         </Grid>
 
         <!-- Notification -->
-        <TextBlock Margin="5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="Notification:"/>
+        <TextBlock Margin="5" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="Notification:" ToolTip="Show a notification when the contact pick up the phone."/>
         <Grid Margin="0,5,0,5" Grid.Column="2" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -67,7 +67,7 @@
 
         <!-- Shortcut key(s) -->
         <Label Content="*" Grid.Column="0" Grid.Row="4" Foreground="Red" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBlock Margin="5" Grid.Column="1" Grid.Row="4" VerticalAlignment="Top"><Run Text="Shortcut key(s):"/><LineBreak/><Run Text="(1 key/line)"/></TextBlock>
+        <TextBlock Margin="5" Grid.Column="1" Grid.Row="4" VerticalAlignment="Top" ToolTip="The shortcut the mod will press for you. Remember: put the same key as in your mod settings."><Run Text="Shortcut key(s):"/><LineBreak/><Run Text="(1 key/line)"/></TextBlock>
         <Grid Grid.Column="2" Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -85,13 +85,13 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Name="ButtonOk" Margin="5,5,0,5" Grid.Column="0" Click="ButtonOk_Click">
+            <Button Name="ButtonOk" Margin="5,5,0,5" Grid.Column="0" Click="ButtonOk_Click" ToolTip="Add the item.">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
                     <TextBlock Text="Ok" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
-            <Button Name="ButtonCancel" Margin="5" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click">
+            <Button Name="ButtonCancel" Margin="5" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click" ToolTip="Cancel.">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="Resources/cancel.png" Margin="5,0,5,0" Stretch="Fill" Height="24" Width="24"/>
                     <TextBlock Text="Cancel" VerticalAlignment="Center" />

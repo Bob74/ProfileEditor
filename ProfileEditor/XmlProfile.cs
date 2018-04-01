@@ -77,18 +77,18 @@ namespace ProfileEditor
         /// <summary>
         /// Export the data into the xml profile.
         /// </summary>
-        /// <param name="path">File path</param>
-        public void ExportProfile(string path)
+        /// <param name="filepath">File path</param>
+        public void ExportProfile(string filepath)
         {
-            CreateFile(path);
+            CreateFile(filepath);
             
             try
             {
-                _profileFile = XElement.Load(path);
+                _profileFile = XElement.Load(filepath);
 
                 try
                 {
-                    WriteXmlProfile(path);
+                    WriteXmlProfile(filepath);
                 }
                 catch (Exception e)
                 {
@@ -106,7 +106,7 @@ namespace ProfileEditor
         /// </summary>
         /// <param name="path">File path</param>
         /// <returns></returns>
-        public XElement ImportProfile(string path, out XmlPhone xmlPhone, out XmlMenu xmlMenu)
+        public XElement ImportProfile(out XmlPhone xmlPhone, out XmlMenu xmlMenu)
         {
             xmlPhone = ReadPhoneValues(_profileFile);
             xmlMenu = ReadMenuValues(_profileFile);
@@ -181,18 +181,21 @@ namespace ProfileEditor
 
                 XmlMenu xmlmenu = new XmlMenu();
                 xmlmenu.Banner = menu.Element("Banner")?.Value ?? XmlMenu.DefaultBanner;
-
+                
                 try
                 {
+                    // Backward compatibility
                     if (menu.Element("Keys") != null)
                     {
                         xmlmenu.HotkeyModifier = (ModifierKeys)int.Parse(menu.Element("Keys").Element("ModifierKey")?.Value ?? "0");
                         xmlmenu.Hotkey = (Key)int.Parse(menu.Element("Keys").Element("Key")?.Value ?? "0");
+                        xmlmenu.GamepadHotkey = int.Parse(menu.Element("Keys").Element("GamepadKey")?.Value ?? "0");
                     }
                     else
                     {
                         xmlmenu.HotkeyModifier = (ModifierKeys)int.Parse(menu.Element("ModifierKey")?.Value ?? "0");
                         xmlmenu.Hotkey = (Key)int.Parse(menu.Element("Key")?.Value ?? "0");
+                        xmlmenu.GamepadHotkey = int.Parse(menu.Element("GamepadKey")?.Value ?? "0");
                     }
                 }
                 catch
@@ -212,6 +215,7 @@ namespace ProfileEditor
         private MenuSound ReadXmlSound(XElement section)
         {
             MenuSound sound = new MenuSound();
+            // Backward compatibility
             if (section.Element("Sound") != null)
             {
                 sound.File = section.Element("Sound")?.Element("SoundFile")?.Value ?? "";
@@ -229,6 +233,7 @@ namespace ProfileEditor
         private Notification ReadXmlNotification(XElement section)
         {
             Notification notif = new Notification();
+            // Backward compatibility
             if (section.Element("Notification") != null)
             {
                 if (section.Element("Notification").Element("NotificationMessage") == null) return null;
@@ -256,7 +261,7 @@ namespace ProfileEditor
         }
 
 
-        private void WriteXmlProfile(string path)
+        private void WriteXmlProfile(string filepath)
         {
             // Phone part
             try
@@ -274,17 +279,29 @@ namespace ProfileEditor
             {
                 if (_menu != null)
                 {
+                    // Creating menu
                     XElement menuSection = GetMenuSection(_menu.Items);
 
-                    XElement keys = new XElement("Keys");
-                    keys.Add(new XElement("ModifierKey", (int)_menu.HotkeyModifier));
+                    // Adding Banner
+                    if (_menu.Banner != "")
+                    {
+                        XElement banner = new XElement("Banner", Path.GetFileName(_menu.Banner));
+                        menuSection.AddFirst(banner);
+                    }
 
-                    if (_menu.GamepadHotkey != 0)
-                        keys.Add(new XElement("GamepadKey", _menu.GamepadHotkey));
-                    else
-                        keys.Add(new XElement("Key", (int)_menu.Hotkey));
-
-                    menuSection.AddFirst(keys);
+                    // Adding Keys
+                    if ((int)_menu.HotkeyModifier != 0 && (int)_menu.Hotkey != 0 && _menu.GamepadHotkey != 0)
+                    {
+                        XElement keys = new XElement("Keys");
+                        if (_menu.GamepadHotkey != 0)
+                            keys.Add(new XElement("GamepadKey", _menu.GamepadHotkey));
+                        else
+                        {
+                            if ((int)_menu.HotkeyModifier != 0) keys.Add(new XElement("ModifierKey", (int)_menu.HotkeyModifier));
+                            if ((int)_menu.Hotkey != 0) keys.Add(new XElement("Key", (int)_menu.Hotkey));
+                        }
+                        menuSection.AddFirst(keys);
+                    }
 
                     _profileFile.Add(menuSection);
                 }
@@ -294,7 +311,7 @@ namespace ProfileEditor
                 MessageBox.Show("Error while writing Menu informations: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            _profileFile.Save(path);
+            _profileFile.Save(filepath);
         }
 
         private XElement GetPhoneSection()

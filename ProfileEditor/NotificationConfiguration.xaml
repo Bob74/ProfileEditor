@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProfileEditor"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Notification" Height="350" Width="580" Closed="Window_Closed" Loaded="Window_Loaded" MinWidth="580" MinHeight="350" MaxWidth="580" WindowStyle="None" WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight">
+        Title="Notification" Height="350" Width="590" Closed="Window_Closed" Loaded="Window_Loaded" MinWidth="590" MinHeight="350" WindowStyle="None" WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight">
     <Window.Resources>
         <DataTemplate x:Key="phoneContactTemplate">
             <WrapPanel Margin="0 5 0 5" Height="64">
@@ -24,8 +24,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Margin="0,0,5,0" Grid.Column="0" Grid.Row="0">
+        <Grid Margin="0,0,5,5" Grid.Column="0" Grid.Row="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -40,24 +41,26 @@
             </Grid.RowDefinitions>
 
 
-            <TextBlock Text="Icon:" Margin="5" Grid.Column="0" Grid.Row="0"/>
-            <ComboBox Name="ComboBoxIcons" Margin="0,5,0,5" ItemTemplate="{StaticResource phoneContactTemplate}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Height="80" SelectionChanged="ComboBoxIcons_SelectionChanged"/>
-            <TextBox Name="TextBoxIcon" Margin="0,5,0,5" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+            <TextBlock Text="Icon:" Margin="5" Grid.Column="1" Grid.Row="0" ToolTip="Set the icon of the notification."/>
+            <ComboBox Name="ComboBoxIcons" Margin="0,5,0,5" ItemTemplate="{StaticResource phoneContactTemplate}" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Height="80" SelectionChanged="ComboBoxIcons_SelectionChanged"/>
+            <TextBox Name="TextBoxIcon" Margin="0,5,0,5" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" ToolTip="You can specify the icon manually by typing its name here."/>
 
 
-            <Label Content="Title:" Grid.Column="0" Grid.Row="2"/>
-            <TextBox Name="TextBoxTitle" Margin="0,5,0,5" Grid.Column="1" Grid.Row="2" TextChanged="TextBoxTitle_TextChanged"/>
-            <Label Content="Subtitle:" Grid.Column="0" Grid.Row="3"/>
-            <TextBox Name="TextBoxSubtitle" Margin="0,5,0,5" Grid.Column="1" Grid.Row="3" TextChanged="TextBoxSubtitle_TextChanged"/>
-            <Label Content="Message:" Grid.Column="0" Grid.Row="4"/>
-            <TextBox Name="TextBoxMessage" Margin="0,5,0,5" Grid.Column="1" Grid.Row="4" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" TextChanged="TextBoxMessage_TextChanged"/>
+            <Label Content="Title:" Grid.Column="1" Grid.Row="2" ToolTip="Title of the notification."/>
+            <TextBox Name="TextBoxTitle" Margin="0,5,0,5" Grid.Column="2" Grid.Row="2" TextChanged="TextBoxTitle_TextChanged"/>
+            <Label Content="Subtitle:" Grid.Column="1" Grid.Row="3" ToolTip="The subtitle displayed under the title."/>
+            <TextBox Name="TextBoxSubtitle" Margin="0,5,0,5" Grid.Column="2" Grid.Row="3" TextChanged="TextBoxSubtitle_TextChanged"/>
+
+            <Label Content="*" Grid.Column="0" Grid.Row="4" Foreground="Red" VerticalAlignment="Top" FontWeight="Bold"/>
+            <Label Content="Message:" Grid.Column="1" Grid.Row="4" ToolTip="The main message of the notification."/>
+            <TextBox Name="TextBoxMessage" Margin="0,5,0,5" Grid.Column="2" Grid.Row="4" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" TextChanged="TextBoxMessage_TextChanged" MaxLength="100"/>
 
 
-            <TextBlock Text="Sound on reception:" Margin="5" Grid.Column="0" Grid.Row="5" Width="55" TextWrapping="Wrap" MinWidth="55"/>
-            <CheckBox Name="CheckBoxSound" Content="(Check if you want to hear the notification's sound)" Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" FontSize="10" VerticalContentAlignment="Center"/>
+            <TextBlock Text="Sound on reception:" Margin="5" Grid.Column="1" Grid.Row="5" Width="55" TextWrapping="Wrap" MinWidth="55" ToolTip="Play the notification's sound when the notification is displayed."/>
+            <CheckBox Name="CheckBoxSound" Content="(Check if you want to hear the notification's sound)" Grid.Column="2" Grid.Row="5" VerticalAlignment="Center" FontSize="10" VerticalContentAlignment="Center"/>
 
-            <TextBlock Text="Delay:" Margin="5" Grid.Column="0" Grid.Row="6" Width="55" TextWrapping="Wrap" MinWidth="55" VerticalAlignment="Center"/>
-            <Grid Grid.Column="1" Grid.Row="6">
+            <TextBlock Text="Delay:" Margin="5" Grid.Column="1" Grid.Row="6" Width="55" TextWrapping="Wrap" MinWidth="55" VerticalAlignment="Center" ToolTip="Delay before showing the notification."/>
+            <Grid Grid.Column="2" Grid.Row="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -65,9 +68,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Wait" Margin="0,5,5,5" Grid.Column="0" VerticalAlignment="Center"/>
-                <xctk:IntegerUpDown Name="IntegerUpDownDelay" Grid.Column="1" Minimum="0" Increment="500" Text="0" VerticalAlignment="Center" MinWidth="80" ValueChanged="IntegerUpDownDelay_ValueChanged"/>
-                <TextBlock Name="TextBlockDelay" Text="millisecond (0 second) before showing the notification." Margin="5" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="10"/>
-
+                <xctk:IntegerUpDown Name="IntegerUpDownDelay" Grid.Column="1" Minimum="0" Increment="500" Text="0" VerticalAlignment="Center" MinWidth="60" ValueChanged="IntegerUpDownDelay_ValueChanged"/>
+                <TextBlock Name="TextBlockDelay" Text="millisecond (0 second)." Margin="5" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center"/>
             </Grid>
 
         </Grid>
@@ -108,19 +110,19 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Name="ButtonOk" Margin="5,5,0,5" Grid.Column="0" Click="ButtonOk_Click">
+                <Button Name="ButtonOk" Margin="5,5,0,5" Grid.Column="0" Click="ButtonOk_Click" ToolTip="Create the notification.">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/checked.png" Margin="5,0,5,0" Stretch="Fill" Width="24" Height="24"/>
                         <TextBlock Text="Ok" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Name="ButtonCancel" Margin="5" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click">
+                <Button Name="ButtonCancel" Margin="5" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click" ToolTip="Cancel.">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/cancel.png" Margin="5,0,5,0" Stretch="Fill" Height="24" Width="24"/>
                         <TextBlock Text="Cancel" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Name="ButtonRemove" Margin="0,5,5,5" Grid.Column="2" Click="ButtonRemove_Click" ToolTip="Remove the notification">
+                <Button Name="ButtonRemove" Margin="0,5,5,5" Grid.Column="2" Click="ButtonRemove_Click" ToolTip="Remove the notification.">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/trash.png" Stretch="Fill" Height="24" Width="24"/>
                     </StackPanel>

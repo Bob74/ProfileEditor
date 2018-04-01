@@ -35,7 +35,7 @@ namespace ProfileEditor
                 XmlPhone phone;
                 XmlMenu menu;
 
-                profile.ImportProfile(path, out phone, out menu);
+                profile.ImportProfile(out phone, out menu);
 
                 new MainWindow(path, phone, menu).Show();
                 Close();

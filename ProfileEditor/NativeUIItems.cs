@@ -66,6 +66,7 @@ namespace ProfileEditor
     {
         public override string DisplayName { get => GetDisplayName(); }
         public List<string> Keys { get; set; }
+        public string KeySequence { get => GetKeySequence(); }
         public Notification Notification { get; set; }
         public MenuSound Sound { get; set; }
 

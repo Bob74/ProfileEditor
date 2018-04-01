@@ -40,7 +40,7 @@
                 <Label Name="LabelTitle" Content="Gerald" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="20" Padding="5,0,50,0"/>
             </Viewbox>
             <Viewbox Grid.Row="1" Height="19" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <Label Name="LabelSubtitle" Content="Mission - NEW" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="16" Padding="5,0,50,0"/>
+                <Label Name="LabelSubtitle" Content="Mission - NEW" FontFamily="/ProfileEditor;component/Fonts/#Chalet" Foreground="WhiteSmoke" FontSize="16" Padding="5,0,25,0"/>
             </Viewbox>
         </Grid>
 
