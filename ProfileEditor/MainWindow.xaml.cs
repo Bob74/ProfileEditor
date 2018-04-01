@@ -538,6 +538,7 @@ namespace ProfileEditor
                     PreviewCurrentSubmenu.Clear();
                     if (File.Exists(TextBoxMenuBanner.Text))
                         PreviewCurrentSubmenu.Add(new NativeUIBanner() { Text = "Banner", FilePath = TextBoxMenuBanner.Text });
+                    PreviewCurrentSubmenu.Add(new NativeUIMenuSubtitle() { Text = ((NativeUIMenuSubmenu)item).Text });
                     PreviewCurrentSubmenu.AddRange(((NativeUIMenuSubmenu)item).Items);
                     PreviewCurrentSubmenu.Add(new NativeUIBack(parent));
                     if (parent != null && parent != RootMenu) PreviewCurrentSubmenu.Add(new NativeUIReturnMenu());
@@ -562,6 +563,7 @@ namespace ProfileEditor
                         PreviewCurrentSubmenu.Clear();
                         if (File.Exists(TextBoxMenuBanner.Text))
                             PreviewCurrentSubmenu.Add(new NativeUIBanner() { Text = "Banner", FilePath = TextBoxMenuBanner.Text });
+                        if (parent.ParentMenu != RootMenu as NativeUIMenuSubmenu) PreviewCurrentSubmenu.Add(new NativeUIMenuSubtitle() { Text = parent.Text });
                         PreviewCurrentSubmenu.AddRange(((NativeUIBack)item).ParentMenu.Items);
                         if (parent.ParentMenu != RootMenu as NativeUIMenuSubmenu) PreviewCurrentSubmenu.Add(new NativeUIBack(parent.ParentMenu));
                         if (parent.ParentMenu != null && parent.ParentMenu != RootMenu) PreviewCurrentSubmenu.Add(new NativeUIReturnMenu());
