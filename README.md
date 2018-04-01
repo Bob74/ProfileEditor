@@ -1,8 +1,9 @@
 # ProfileEditor
 
-Profile Editor allows you to easily create or edit profiles for [No More Shortcuts](https://github.com/Bob74/NoMoreShortcuts).
+Profile Editor allows you to easily create or edit profiles for [No More Shortcuts](https://github.com/Bob74/NoMoreShortcuts).  
+You will have a real time preview of what the phone contact or your menu will be in game.
 
-It is quite self explanatory but if needed, you will find help by hovering the labels of every settings with your mouse cursor.
+It is quite self explanatory to use but if needed, you will find help by hovering the labels of every settings with your mouse cursor.
 
 ![](https://i.imgur.com/QESlyNP.png)
 
