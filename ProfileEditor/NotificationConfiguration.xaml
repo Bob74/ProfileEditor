@@ -41,25 +41,25 @@
             </Grid.RowDefinitions>
 
 
-            <TextBlock Text="Icon:" Margin="5" Grid.Column="1" Grid.Row="0" ToolTip="Set the icon of the notification."/>
+            <TextBlock Text="Icon:" Grid.Column="1" Grid.Row="0" ToolTip="Set the icon of the notification."/>
             <ComboBox Name="ComboBoxIcons" Margin="0,5,0,5" ItemTemplate="{StaticResource phoneContactTemplate}" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Height="80" SelectionChanged="ComboBoxIcons_SelectionChanged"/>
             <TextBox Name="TextBoxIcon" Margin="0,5,0,5" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" ToolTip="You can specify the icon manually by typing its name here."/>
 
 
-            <Label Content="Title:" Grid.Column="1" Grid.Row="2" ToolTip="Title of the notification."/>
+            <TextBlock Text="Title:" Grid.Column="1" Grid.Row="2" ToolTip="Title of the notification."/>
             <TextBox Name="TextBoxTitle" Margin="0,5,0,5" Grid.Column="2" Grid.Row="2" TextChanged="TextBoxTitle_TextChanged"/>
-            <Label Content="Subtitle:" Grid.Column="1" Grid.Row="3" ToolTip="The subtitle displayed under the title."/>
+            <TextBlock Text="Subtitle:" Grid.Column="1" Grid.Row="3" ToolTip="The subtitle displayed under the title."/>
             <TextBox Name="TextBoxSubtitle" Margin="0,5,0,5" Grid.Column="2" Grid.Row="3" TextChanged="TextBoxSubtitle_TextChanged"/>
 
-            <Label Content="*" Grid.Column="0" Grid.Row="4" Foreground="Red" VerticalAlignment="Top" FontWeight="Bold"/>
-            <Label Content="Message:" Grid.Column="1" Grid.Row="4" ToolTip="The main message of the notification."/>
+            <Label Content="*" Grid.Column="0" Grid.Row="4" Foreground="Red" VerticalAlignment="Top" FontWeight="Bold" Padding="5,0"/>
+            <TextBlock Text="Message:" Grid.Column="1" Grid.Row="4" ToolTip="The main message of the notification."/>
             <TextBox Name="TextBoxMessage" Margin="0,5,0,5" Grid.Column="2" Grid.Row="4" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" TextChanged="TextBoxMessage_TextChanged" MaxLength="100"/>
 
 
-            <TextBlock Text="Sound on reception:" Margin="5" Grid.Column="1" Grid.Row="5" Width="55" TextWrapping="Wrap" MinWidth="55" ToolTip="Play the notification's sound when the notification is displayed."/>
+            <TextBlock Text="Sound on reception:" Grid.Column="1" Grid.Row="5" Width="55" TextWrapping="Wrap" MinWidth="55" ToolTip="Play the notification's sound when the notification is displayed."/>
             <CheckBox Name="CheckBoxSound" Content="(Check if you want to hear the notification's sound)" Grid.Column="2" Grid.Row="5" VerticalAlignment="Center" FontSize="10" VerticalContentAlignment="Center"/>
 
-            <TextBlock Text="Delay:" Margin="5" Grid.Column="1" Grid.Row="6" Width="55" TextWrapping="Wrap" MinWidth="55" VerticalAlignment="Center" ToolTip="Delay before showing the notification."/>
+            <TextBlock Text="Delay:" Grid.Column="1" Grid.Row="6" Width="55" TextWrapping="Wrap" MinWidth="55" VerticalAlignment="Center" ToolTip="Delay before showing the notification."/>
             <Grid Grid.Column="2" Grid.Row="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
