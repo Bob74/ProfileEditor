@@ -5,7 +5,7 @@ You will have a real time preview of what the phone contact or your menu will be
 
 It is quite self explanatory to use but if needed, you will find help by hovering the labels of every settings with your mouse cursor.
 
-![](https://i.imgur.com/QESlyNP.png)
+![Profile Editor](https://i.imgur.com/QESlyNP.png)
 
 
 Documentation
