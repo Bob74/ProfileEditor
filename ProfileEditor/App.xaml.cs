@@ -13,5 +13,6 @@ namespace ProfileEditor
     /// </summary>
     public partial class App : Application
     {
+
     }
 }
