@@ -1,31 +1,46 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+
+using Microsoft.Win32;
 
 namespace ProfileEditor
 {
     class Tools
     {
-        public static string GetGamePath(string key = "SOFTWARE\\WOW6432Node\\Rockstar Games\\Grand Theft Auto V")
+        public static string GetBaseDir()
         {
-            object value = "";
+            object gamePath = GetGamePath();
+            if (gamePath != null) return gamePath.ToString() + "\\scripts\\NoMoreShortcuts";
 
-            RegistryKey reg = Registry.LocalMachine.OpenSubKey(key, false);
-            value = reg?.GetValue("InstallFolder") ?? null;
-
-            if (value != null)
-                return value.ToString();
-            else
-                return null;
+            return AppDomain.CurrentDomain.BaseDirectory;
         }
+
+        public static object GetGamePath()
+        {
+            string[] keys = new[]
+            {
+                "SOFTWARE\\WOW6432Node\\Rockstar Games\\Grand Theft Auto V",
+                "SOFTWARE\\Rockstar Games\\Grand Theft Auto V"
+            };
+
+            object value = null;
+
+            foreach (string key in keys)
+            {
+                RegistryKey reg = Registry.LocalMachine.OpenSubKey(key, false);
+                value = reg?.GetValue("InstallFolder") ?? null;
+
+                if (value != null)
+                    if (value.ToString() != "") return value;
+            }
+
+            return null;
+        }
+
 
         public static bool IsUpdateAvailable()
         {

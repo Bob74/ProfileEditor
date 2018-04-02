@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,10 +9,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Microsoft.Win32;
 using SharpDX.XInput;
 
 /*
-  
+    1.0.2 (02/04/2018); - Fixed freezing when browsing a file
+
     1.0.1 (01/04/2018): - Fixed an issue where menu hotkey wouldn't be saved
                         - When exporting, it will display an error message on error.
 
@@ -126,7 +127,7 @@ namespace ProfileEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string BaseDir = Tools.GetGamePath()?.ToString() + "\\scripts\\NoMoreShortcuts" ?? AppDomain.CurrentDomain.BaseDirectory;
+        public static string BaseDir = Tools.GetBaseDir();
         public static readonly List<string> BannerFileExtensions = new List<string> { ".png", ".jpeg", ".jpg", ".bmp" };
         public static readonly List<string> SoundFileExtensions = new List<string> { ".wav" };
         
