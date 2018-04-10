@@ -24,6 +24,7 @@ using SharpDX.XInput;
     -----
     - Afficher les touches utilisées par les mods
     - Permettre de bouger les éléments du menu en haut et en bas (Ctrl + UP)
+    - Plusieurs contacts ?
 
     X Check la version pour Update
     X Icône pour Edit item

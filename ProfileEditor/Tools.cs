@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -21,18 +22,18 @@ namespace ProfileEditor
 
         public static object GetGamePath()
         {
-            string[] keys = new[]
+            object value = null;
+            List<string[]> keys = new List<string[]>
             {
-                "SOFTWARE\\WOW6432Node\\Rockstar Games\\Grand Theft Auto V",
-                "SOFTWARE\\Rockstar Games\\Grand Theft Auto V"
+                new string[] { "SOFTWARE\\WOW6432Node\\Rockstar Games\\Grand Theft Auto V", "InstallFolder" },
+                new string[] { "SOFTWARE\\Rockstar Games\\Grand Theft Auto V", "InstallFolder" },
+                new string[] { "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{E01FA564-2094-4833-8F2F-1FFEC6AFCC46}", "InstallLocation" },
             };
 
-            object value = null;
-
-            foreach (string key in keys)
+            foreach (string[] key in keys)
             {
-                RegistryKey reg = Registry.LocalMachine.OpenSubKey(key, false);
-                value = reg?.GetValue("InstallFolder") ?? null;
+                RegistryKey reg = Registry.LocalMachine.OpenSubKey(key[0], false);
+                value = reg?.GetValue(key[1]) ?? null;
 
                 if (value != null)
                     if (value.ToString() != "") return value;
