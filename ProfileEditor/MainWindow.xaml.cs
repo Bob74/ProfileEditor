@@ -13,7 +13,9 @@ using Microsoft.Win32;
 using SharpDX.XInput;
 
 /*
-    1.0.2 (02/04/2018); - Fixed freezing when browsing a file
+    1.0.3 (06/11/2018): - Fixed a bug allowing to add multiple banners, resulting in having no banner at all in the profile.
+
+    1.0.2 (02/04/2018): - Fixed freezing when browsing a file
 
     1.0.1 (01/04/2018): - Fixed an issue where menu hotkey wouldn't be saved
                         - When exporting, it will display an error message on error.
