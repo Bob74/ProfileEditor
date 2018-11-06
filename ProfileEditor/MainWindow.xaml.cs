@@ -432,6 +432,10 @@ namespace ProfileEditor
         {
             if (File.Exists(TextBoxMenuBanner.Text) && BannerFileExtensions.Any(TextBoxMenuBanner.Text.EndsWith))
             {
+                if (RootMenu.Items.Count > 0)
+                    if (RootMenu.Items[0] is NativeUIBanner)
+                        RootMenu.Items.RemoveAt(0);
+
                 RootMenu.Items.Insert(0, new NativeUIBanner() { Text = "Banner", FilePath = TextBoxMenuBanner.Text });
                 RefreshTreeview();
             }
