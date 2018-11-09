@@ -13,7 +13,9 @@ using Microsoft.Win32;
 using SharpDX.XInput;
 
 /*
-    1.0.2 (02/04/2018); - Fixed freezing when browsing a file
+    1.0.3 (06/11/2018): - Fixed a bug allowing to add multiple banners, resulting in having no banner at all in the profile.
+
+    1.0.2 (02/04/2018): - Fixed freezing when browsing a file
 
     1.0.1 (01/04/2018): - Fixed an issue where menu hotkey wouldn't be saved
                         - When exporting, it will display an error message on error.
@@ -432,6 +434,10 @@ namespace ProfileEditor
         {
             if (File.Exists(TextBoxMenuBanner.Text) && BannerFileExtensions.Any(TextBoxMenuBanner.Text.EndsWith))
             {
+                if (RootMenu.Items.Count > 0)
+                    if (RootMenu.Items[0] is NativeUIBanner)
+                        RootMenu.Items.RemoveAt(0);
+
                 RootMenu.Items.Insert(0, new NativeUIBanner() { Text = "Banner", FilePath = TextBoxMenuBanner.Text });
                 RefreshTreeview();
             }
